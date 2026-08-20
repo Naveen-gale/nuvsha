@@ -5,7 +5,7 @@ export class ComponentNode {
   constructor() {
     this.type = 'Component';
     this.script = ''; // Holds all JavaScript code from <script> blocks
-    this.template = null; // The root HTML element
+    this.template = []; // Array to hold multiple root HTML elements
   }
 }
 
@@ -38,5 +38,29 @@ export class ExpressionNode {
   constructor(expression) {
     this.type = 'Expression';
     this.expression = expression;
+  }
+}
+
+/**
+ * Represents an if/else conditional block
+ */
+export class ConditionalNode {
+  constructor(condition) {
+    this.type = 'Conditional';
+    this.condition = condition;
+    this.consequent = []; // Children when true
+    this.alternate = [];  // Children when false
+    this.inElse = false;  // Parser state flag
+  }
+}
+
+/**
+ * Represents a loop block
+ */
+export class ForNode {
+  constructor(expression) {
+    this.type = 'For';
+    this.expression = expression; // e.g., "item of items"
+    this.children = [];
   }
 }

@@ -5,7 +5,12 @@ export const TokenType = {
   TAG_OPEN: 'TAG_OPEN',     // e.g. <div>
   TAG_CLOSE: 'TAG_CLOSE',   // e.g. </div>
   TEXT: 'TEXT',             // e.g. Hello Nuvsha!
-  EXPRESSION: 'EXPRESSION'  // e.g. {name}
+  EXPRESSION: 'EXPRESSION', // e.g. {name}
+  BLOCK_IF_OPEN: 'BLOCK_IF_OPEN', // {if condition}
+  BLOCK_ELSE: 'BLOCK_ELSE',       // {else}
+  BLOCK_IF_CLOSE: 'BLOCK_IF_CLOSE', // {/if}
+  BLOCK_FOR_OPEN: 'BLOCK_FOR_OPEN', // {for item of items}
+  BLOCK_FOR_CLOSE: 'BLOCK_FOR_CLOSE', // {/for}
 };
 
 /**
@@ -88,6 +93,19 @@ export function tokenize(input) {
             }
             current++; // skip closing quote
             attributes[attrName] = attrValue;
+          } else if (quote === '{') {
+            current++; // skip '{'
+            let attrValue = '';
+            let braceCount = 1;
+            while (current < input.length && braceCount > 0) {
+              if (input[current] === '{') braceCount++;
+              if (input[current] === '}') braceCount--;
+              if (braceCount > 0) {
+                attrValue += input[current];
+              }
+              current++;
+            }
+            attributes[attrName] = { type: 'expression', value: attrValue };
           } else {
              // unquoted attribute value
              let attrValue = '';
@@ -117,16 +135,40 @@ export function tokenize(input) {
     if (char === '{') {
       current++; // skip '{'
       let expression = '';
-      while (current < input.length && input[current] !== '}') {
-        expression += input[current];
+      let braceCount = 1;
+      while (current < input.length && braceCount > 0) {
+        if (input[current] === '{') braceCount++;
+        if (input[current] === '}') braceCount--;
+        if (braceCount > 0) {
+          expression += input[current];
+        }
         current++;
       }
-      current++; // skip '}'
       
-      tokens.push({
-        type: TokenType.EXPRESSION,
-        value: expression.trim()
-      });
+      const trimmedExpr = expression.trim();
+      
+      if (trimmedExpr.startsWith('if ')) {
+        tokens.push({
+          type: TokenType.BLOCK_IF_OPEN,
+          condition: trimmedExpr.slice(3).trim()
+        });
+      } else if (trimmedExpr === 'else') {
+        tokens.push({ type: TokenType.BLOCK_ELSE });
+      } else if (trimmedExpr === '/if') {
+        tokens.push({ type: TokenType.BLOCK_IF_CLOSE });
+      } else if (trimmedExpr.startsWith('for ')) {
+        tokens.push({
+          type: TokenType.BLOCK_FOR_OPEN,
+          expression: trimmedExpr.slice(4).trim()
+        });
+      } else if (trimmedExpr === '/for') {
+        tokens.push({ type: TokenType.BLOCK_FOR_CLOSE });
+      } else {
+        tokens.push({
+          type: TokenType.EXPRESSION,
+          value: trimmedExpr
+        });
+      }
       continue;
     }
 

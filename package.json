@@ -8,6 +8,6 @@
     "playground"
   ],
   "scripts": {
-    "test": "node --test nuvsha/tests/compiler.test.js"
+    "test": "node --test nuvsha/tests/compiler.test.js create-nuvsha/tests/cli.test.js"
   }
 }

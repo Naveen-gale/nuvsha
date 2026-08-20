@@ -1,5 +1,19 @@
 import { TokenType } from './lexer.js';
-import { ComponentNode, ElementNode, TextNode, ExpressionNode } from './ast.js';
+import { ComponentNode, ElementNode, TextNode, ExpressionNode, ConditionalNode, ForNode } from './ast.js';
+
+function addChild(stack, component, node) {
+  if (stack.length > 0) {
+    const parent = stack[stack.length - 1];
+    if (parent.type === 'Conditional') {
+      if (parent.inElse) parent.alternate.push(node);
+      else parent.consequent.push(node);
+    } else {
+      parent.children.push(node);
+    }
+  } else {
+    component.template.push(node);
+  }
+}
 
 /**
  * The parser loops through tokens and builds a tree structure (AST).
@@ -18,58 +32,48 @@ export function parse(tokens) {
     if (token.type === TokenType.TAG_OPEN) {
       if (token.value === 'script') {
         inScript = true;
-        continue; // Don't add <script> to the HTML tree
+        continue;
       }
-
-      // We found a new element tag like <div>
       const node = new ElementNode(token.value, token.attributes);
-      
-      // If there is no root template yet, this is the root of our component HTML
-      if (!component.template) {
-        component.template = node;
-      }
-      
-      // If we are currently inside another element, add this one as a child
-      if (stack.length > 0) {
-        const parent = stack[stack.length - 1];
-        parent.children.push(node);
-      }
-      
-      // Push this new element onto the stack because we are now "inside" it
-      // UNLESS it's a self-closing tag like <img />
+      addChild(stack, component, node);
       if (!token.isSelfClosing) {
         stack.push(node);
       }
-      
     } else if (token.type === TokenType.TEXT) {
       if (inScript) {
-        // This text is actually JavaScript code!
         component.script += token.value + '\n';
       } else {
-        // We found text. Add it as a child to the current element we are inside of.
         const node = new TextNode(token.value);
-        if (stack.length > 0) {
-          const parent = stack[stack.length - 1];
-          parent.children.push(node);
-        }
+        addChild(stack, component, node);
       }
-      
     } else if (token.type === TokenType.EXPRESSION) {
-      // We found a dynamic {variable}. Add it to the tree.
       const node = new ExpressionNode(token.value);
-      if (stack.length > 0) {
-        const parent = stack[stack.length - 1];
-        parent.children.push(node);
+      addChild(stack, component, node);
+    } else if (token.type === TokenType.BLOCK_IF_OPEN) {
+      const node = new ConditionalNode(token.condition);
+      addChild(stack, component, node);
+      stack.push(node);
+    } else if (token.type === TokenType.BLOCK_ELSE) {
+      if (stack.length > 0 && stack[stack.length - 1].type === 'Conditional') {
+        stack[stack.length - 1].inElse = true;
       }
-
+    } else if (token.type === TokenType.BLOCK_IF_CLOSE) {
+      if (stack.length > 0 && stack[stack.length - 1].type === 'Conditional') {
+        stack.pop();
+      }
+    } else if (token.type === TokenType.BLOCK_FOR_OPEN) {
+      const node = new ForNode(token.expression);
+      addChild(stack, component, node);
+      stack.push(node);
+    } else if (token.type === TokenType.BLOCK_FOR_CLOSE) {
+      if (stack.length > 0 && stack[stack.length - 1].type === 'For') {
+        stack.pop();
+      }
     } else if (token.type === TokenType.TAG_CLOSE) {
       if (token.value === 'script') {
         inScript = false;
         continue;
       }
-
-      // We found a closing tag like </div>. 
-      // We are no longer inside this element, so pop it off the stack.
       if (stack.length > 0) {
         stack.pop();
       }
