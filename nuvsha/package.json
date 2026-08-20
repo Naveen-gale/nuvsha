@@ -1,0 +1,11 @@
+{
+  "name": "nuvsha",
+  "version": "1.0.0",
+  "description": "Nuvsha framework",
+  "main": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./vite-plugin": "./src/vite/plugin.js"
+  }
+}

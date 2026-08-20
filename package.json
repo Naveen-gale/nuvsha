@@ -1,0 +1,13 @@
+{
+  "name": "nuvsha-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "nuvsha",
+    "playground"
+  ],
+  "scripts": {
+    "test": "node --test nuvsha/tests/compiler.test.js"
+  }
+}

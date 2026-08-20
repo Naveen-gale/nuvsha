@@ -1,0 +1,16 @@
+<script>
+  const name = "Alex";
+  const age = 20;
+  let count = 0;
+</script>
+
+<div>
+  <h1>Hello Nuvsha!</h1>
+
+  <p>My name is {name}</p>
+
+  <p>My age is {age}</p>
+
+  <button onclick={() => count++}>Increment</button>
+  
+</div>
