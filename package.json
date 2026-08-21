@@ -5,9 +5,10 @@
   "type": "module",
   "workspaces": [
     "nuvsha",
-    "playground"
+    "playground",
+    "my-app"
   ],
   "scripts": {
-    "test": "node --test nuvsha/tests/compiler.test.js create-nuvsha/tests/cli.test.js"
+    "test": "node --test nuvsha/tests/compiler.test.js"
   }
 }

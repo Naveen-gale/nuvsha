@@ -1,24 +1,184 @@
 <script>
-  name = "Nuvsha"
-  age = 1
-  items = ["HTML", "CSS", "JavaScript"]
+  import Card from "./components/Card.nuv"
+
+  name = ""
+  count = 0
+  show = true
+  accepted = false
+
+  items = ["HTML", "CSS"]
+
+  user = {
+    name: "Alex",
+    age: 20
+  }
+
+  addItem = () => {
+    items.push("JavaScript")
+  }
+
+  removeItem = () => {
+    items.pop()
+  }
+
+  toggle = () => {
+    show = !show
+  }
 </script>
 
-<div class="app">
-  <header>
-    <h1>Hello {name}!</h1>
-    <p>Version {age}</p>
-  </header>
 
-  <main>
+<div class="app">
+
+  <h1>Nuvsha Phase 1–7 Test</h1>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 2: EXPRESSIONS + EVENTS -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Expressions</h2>
+
+    <p>Name: {name}</p>
+
+    <p>Count: {count}</p>
+
+    <p>Next: {count + 1}</p>
+
+    <p>Uppercase: {name.toUpperCase()}</p>
+
+    <p>User: {user.name}</p>
+
+    <p>Age: {user.age}</p>
+
+    <p>Items: {items.length}</p>
+
+    <button onclick="count++">
+      Add
+    </button>
+
+    <button onclick="count--">
+      Remove
+    </button>
+
+    <button onclick="console.log('Hello ' + name)">
+      Greet
+    </button>
+  </section>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 3: FORM + BINDING        -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Form Binding</h2>
+
+    <input
+      bind={name}
+      placeholder="Enter your name"
+    />
+
+    <p>Hello {name}</p>
+
+    <label>
+      <input
+        type="checkbox"
+        bind={accepted}
+      />
+
+      Accept terms
+    </label>
+
+    <p>Accepted: {accepted}</p>
+
+    <select bind={name}>
+      <option value="">Choose name</option>
+      <option value="Alex">Alex</option>
+      <option value="John">John</option>
+      <option value="Nuvsha">Nuvsha</option>
+    </select>
+
+    <p>Selected: {name}</p>
+  </section>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 4: REACTIVE LOOP         -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Reactive List</h2>
+
     <ul>
       {for item of items}
         <li>{item}</li>
       {/for}
     </ul>
 
-    <button onclick="age++">
-      Increase
+    <button onclick="addItem()">
+      Add JavaScript
     </button>
-  </main>
+
+    <button onclick="removeItem()">
+      Remove Last
+    </button>
+  </section>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 5: COMPONENT PROPS       -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Component Props</h2>
+
+    <Card
+      title="Nuvsha Card"
+      count={count}
+    />
+  </section>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 6: CONDITIONS             -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Conditional</h2>
+
+    <button onclick="toggle()">
+      Toggle Message
+    </button>
+
+    {if show}
+
+      <p>
+        Message is visible.
+      </p>
+
+    {else}
+
+      <p>
+        Message is hidden.
+      </p>
+
+    {/if}
+  </section>
+
+
+  <!-- ============================== -->
+  <!-- PHASE 7: ASYNC                  -->
+  <!-- ============================== -->
+
+  <section>
+    <h2>Async</h2>
+
+    <p>
+      Async test should be tested
+      using the async syntax currently
+      implemented by Nuvsha.
+    </p>
+  </section>
+
 </div>

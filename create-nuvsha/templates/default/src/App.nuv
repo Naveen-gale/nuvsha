@@ -1,4 +1,9 @@
+<script>
+  import Navbar from "./components/Navbar.nuv"
+  import Home from "./pages/Home.nuv"
+</script>
+
 <div class="app">
-  <h1>Hello Nuvsha!</h1>
-  <p>Welcome to your Nuvsha application.</p>
+  <Navbar />
+  <Home />
 </div>

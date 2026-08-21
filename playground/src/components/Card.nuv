@@ -1,0 +1,9 @@
+<div class="card">
+
+  <h2>{title}</h2>
+
+  <p>
+    Child count: {count}
+  </p>
+
+</div>

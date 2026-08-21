@@ -1,0 +1,8 @@
+<script>
+  message = "Welcome to Nuvsha!"
+</script>
+
+<main class="home">
+  <h1>Hello Nuvsha!</h1>
+  <p>{message}</p>
+</main>

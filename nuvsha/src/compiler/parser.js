@@ -1,12 +1,45 @@
 import { TokenType } from './lexer.js';
-import { ComponentNode, ElementNode, TextNode, ExpressionNode, ConditionalNode, ForNode } from './ast.js';
+import { ComponentNode, ElementNode, TextNode, ExpressionNode, ConditionalNode, ForNode, ComponentCallNode, SlotNode, AsyncNode } from './ast.js';
 
+// A tag name starting with an uppercase letter is a user-defined component.
+// e.g. <Card /> → ComponentCallNode,  <div> → ElementNode
+function isComponent(tagName) {
+  return tagName.length > 0 && tagName[0] === tagName[0].toUpperCase() && tagName[0] !== tagName[0].toLowerCase();
+}
+
+/**
+ * Adds a child node to the current position in the tree.
+ *
+ * The parser uses a `stack` to track nesting:
+ *   <div>         → push div onto stack
+ *     <p>         → push p onto stack
+ *     </p>        → pop p
+ *   </div>        → pop div
+ *
+ * Special handling:
+ *   - ConditionalNode has two child arrays: consequent (if true) and alternate (else)
+ *   - AsyncNode has three child arrays: children (success), loading, error
+ *   - For/Component/other nodes have a single children array
+ */
 function addChild(stack, component, node) {
   if (stack.length > 0) {
     const parent = stack[stack.length - 1];
+
     if (parent.type === 'Conditional') {
+      // Route into consequent or alternate based on which branch we're in
       if (parent.inElse) parent.alternate.push(node);
       else parent.consequent.push(node);
+
+    } else if (parent.type === 'Async') {
+      // Route into the correct async section
+      if (parent.section === 'loading') parent.loading.push(node);
+      else if (parent.section === 'error') parent.error.push(node);
+      else parent.children.push(node); // 'success' (default)
+
+    } else if (parent.type === 'ComponentCall') {
+      // Children inside <Card>...</Card> become slotted content
+      parent.children.push(node);
+
     } else {
       parent.children.push(node);
     }
@@ -18,7 +51,8 @@ function addChild(stack, component, node) {
 /**
  * The parser loops through tokens and builds a tree structure (AST).
  * It returns a ComponentNode that contains both the JavaScript and the HTML tree.
- * @param {Array} tokens 
+ *
+ * @param {Array} tokens
  * @returns {ComponentNode} The root component
  */
 export function parse(tokens) {
@@ -34,11 +68,32 @@ export function parse(tokens) {
         inScript = true;
         continue;
       }
-      const node = new ElementNode(token.value, token.attributes);
-      addChild(stack, component, node);
-      if (!token.isSelfClosing) {
-        stack.push(node);
+
+      // Phase 7: <slot /> — content projection placeholder
+      if (token.value === 'slot') {
+        const node = new SlotNode();
+        addChild(stack, component, node);
+        // slot is always self-closing — don't push to stack
+        continue;
       }
+
+      if (isComponent(token.value)) {
+        // Uppercase tag → user-defined component call
+        const node = new ComponentCallNode(token.value, token.attributes);
+        addChild(stack, component, node);
+
+        // If NOT self-closing, push onto stack so children can be added as slot content
+        if (!token.isSelfClosing) {
+          stack.push(node);
+        }
+      } else {
+        const node = new ElementNode(token.value, token.attributes);
+        addChild(stack, component, node);
+        if (!token.isSelfClosing) {
+          stack.push(node);
+        }
+      }
+
     } else if (token.type === TokenType.TEXT) {
       if (inScript) {
         component.script += token.value + '\n';
@@ -46,34 +101,88 @@ export function parse(tokens) {
         const node = new TextNode(token.value);
         addChild(stack, component, node);
       }
+
     } else if (token.type === TokenType.EXPRESSION) {
       const node = new ExpressionNode(token.value);
       addChild(stack, component, node);
+
+    // ── Phase 6: Conditional blocks ───────────────────────────────────────
     } else if (token.type === TokenType.BLOCK_IF_OPEN) {
       const node = new ConditionalNode(token.condition);
       addChild(stack, component, node);
       stack.push(node);
+
     } else if (token.type === TokenType.BLOCK_ELSE) {
-      if (stack.length > 0 && stack[stack.length - 1].type === 'Conditional') {
-        stack[stack.length - 1].inElse = true;
+      // Find the nearest ConditionalNode on the stack
+      for (let j = stack.length - 1; j >= 0; j--) {
+        if (stack[j].type === 'Conditional') {
+          stack[j].inElse = true;
+          break;
+        }
       }
+
+    } else if (token.type === TokenType.BLOCK_ELSE_IF) {
+      // {else if condition} — create a nested ConditionalNode inside the alternate branch
+      // This makes {else if} behave like {else}{if ...}{/if}{/else}
+      for (let j = stack.length - 1; j >= 0; j--) {
+        if (stack[j].type === 'Conditional') {
+          // Transition existing node to else
+          stack[j].inElse = true;
+          // Push a new conditional as a child of the else branch
+          const elseIfNode = new ConditionalNode(token.condition);
+          stack[j].alternate.push(elseIfNode);
+          stack.push(elseIfNode);
+          break;
+        }
+      }
+
     } else if (token.type === TokenType.BLOCK_IF_CLOSE) {
-      if (stack.length > 0 && stack[stack.length - 1].type === 'Conditional') {
+      // Pop all Conditional nodes until we find the matching one
+      while (stack.length > 0 && stack[stack.length - 1].type === 'Conditional') {
         stack.pop();
+        break; // only pop one level at a time
       }
+
+    // ── Phase 4: For loops ───────────────────────────────────────────────
     } else if (token.type === TokenType.BLOCK_FOR_OPEN) {
       const node = new ForNode(token.expression);
       addChild(stack, component, node);
       stack.push(node);
+
     } else if (token.type === TokenType.BLOCK_FOR_CLOSE) {
       if (stack.length > 0 && stack[stack.length - 1].type === 'For') {
         stack.pop();
       }
+
+    // ── Phase 7: Async blocks ─────────────────────────────────────────────
+    } else if (token.type === TokenType.BLOCK_ASYNC_OPEN) {
+      const node = new AsyncNode(token.varName, token.expression);
+      addChild(stack, component, node);
+      stack.push(node);
+
+    } else if (token.type === TokenType.BLOCK_ASYNC_LOADING) {
+      // Switch the nearest AsyncNode to its loading section
+      for (let j = stack.length - 1; j >= 0; j--) {
+        if (stack[j].type === 'Async') { stack[j].section = 'loading'; break; }
+      }
+
+    } else if (token.type === TokenType.BLOCK_ASYNC_ERROR) {
+      // Switch the nearest AsyncNode to its error section
+      for (let j = stack.length - 1; j >= 0; j--) {
+        if (stack[j].type === 'Async') { stack[j].section = 'error'; break; }
+      }
+
+    } else if (token.type === TokenType.BLOCK_ASYNC_CLOSE) {
+      if (stack.length > 0 && stack[stack.length - 1].type === 'Async') {
+        stack.pop();
+      }
+
     } else if (token.type === TokenType.TAG_CLOSE) {
       if (token.value === 'script') {
         inScript = false;
         continue;
       }
+
       if (stack.length > 0) {
         stack.pop();
       }
