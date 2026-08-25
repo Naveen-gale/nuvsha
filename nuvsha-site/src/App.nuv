@@ -1,0 +1,132 @@
+﻿<script>
+  import Navbar from "./components/Navbar.nuv"
+  import Hero from "./components/Hero.nuv"
+  import FeatureCard from "./components/FeatureCard.nuv"
+  import Footer from "./components/Footer.nuv"
+
+  count = 0
+
+  features = [
+    { icon: "✦", title: "Simple Syntax",   description: "Use familiar HTML and simple JavaScript. No special DSL to learn." },
+    { icon: "⚡", title: "Reactive UI",      description: "Update state and let Nuvsha update only the affected DOM nodes." },
+    { icon: "▣", title: "Components",       description: "Build reusable UI with simple .nuv components and props." },
+    { icon: "📋", title: "Easy Forms",       description: "Bind form values without complicated APIs or boilerplate." },
+    { icon: "↕", title: "Fast DOM Updates", description: "Nuvsha updates only the UI that needs to change, nothing more." },
+    { icon: "⚙", title: "Vite Powered",     description: "Use the modern Vite development workflow for instant hot reload." }
+  ]
+</script>
+
+<div class="site-root">
+
+  <Navbar />
+
+  <main>
+
+    <Hero />
+
+    <!-- ── Features ── -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">What you get</div>
+          <h2>Everything you need. Nothing you don't.</h2>
+          <p>Nuvsha gives you reactive UI without the complexity of a full framework.</p>
+        </div>
+        <div class="features-grid">
+          {for feature of features}
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+            />
+          {/for}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Interactive Demo ── -->
+    <section class="demo" id="demo">
+      <div class="container">
+        <div class="demo-wrapper">
+          <div class="demo-info">
+            <div class="section-label">Try it</div>
+            <h2>Reactive UI in action.</h2>
+            <p>This counter is a real Nuvsha component. Click the buttons — the DOM updates instantly with no page reload.</p>
+            <div class="demo-code">
+              <div class="demo-code-header">
+                <div class="traffic-light">
+                  <span class="tl-dot tl-red"></span>
+                  <span class="tl-dot tl-yellow"></span>
+                  <span class="tl-dot tl-green"></span>
+                </div>
+                <span class="demo-code-title">Counter.nuv</span>
+              </div>
+              <div class="demo-code-body">
+                <div><span class="code-tag">&lt;script&gt;</span></div>
+                <div>  count = <span class="code-val">0</span></div>
+                <div><span class="code-tag">&lt;/script&gt;</span></div>
+                <div>&nbsp;</div>
+                <div><span class="code-expr">{count}</span></div>
+                <div>&nbsp;</div>
+                <div><span class="code-tag">&lt;button</span> <span class="code-attr">onclick</span>=<span class="code-val">"count++"</span><span class="code-tag">&gt;</span>Add<span class="code-tag">&lt;/button&gt;</span></div>
+                <div><span class="code-tag">&lt;button</span> <span class="code-attr">onclick</span>=<span class="code-val">"count--"</span><span class="code-tag">&gt;</span>Remove<span class="code-tag">&lt;/button&gt;</span></div>
+                <div><span class="code-tag">&lt;button</span> <span class="code-attr">onclick</span>=<span class="code-val">"count = 0"</span><span class="code-tag">&gt;</span>Reset<span class="code-tag">&lt;/button&gt;</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-panel">
+            <div class="demo-panel-header">Live Preview</div>
+            <div class="demo-counter-display">{count}</div>
+            <div class="demo-counter-label">Clicks</div>
+            <div class="demo-counter-btns">
+              <button class="btn btn-primary" onclick="count++">Add</button>
+              <button class="btn btn-outline" onclick="count--">Remove</button>
+              <button class="btn btn-outline" onclick="count = 0">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── About ── -->
+    <section class="about" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-intro">
+            <div class="section-label">About Nuvsha</div>
+            <h2>Familiar HTML. Simple JavaScript.</h2>
+            <p>Nuvsha keeps HTML familiar while simplifying the JavaScript needed to build reactive interfaces. Write a .nuv file, declare your state, and let the compiler handle the rest.</p>
+            <p style="margin-top: 16px;">No virtual DOM. No complex state management. No build-time magic beyond what you can read and understand.</p>
+          </div>
+          <div class="about-points">
+            <div class="about-point">
+              <span class="about-point-num">01</span>
+              <div>
+                <h3>Simple</h3>
+                <p>State is just a variable. Events are just attribute values. No hooks, no observables, no stores required.</p>
+              </div>
+            </div>
+            <div class="about-point">
+              <span class="about-point-num">02</span>
+              <div>
+                <h3>Reactive</h3>
+                <p>Assign to a variable, the UI updates. Nuvsha watches your state and patches only what changed.</p>
+              </div>
+            </div>
+            <div class="about-point">
+              <span class="about-point-num">03</span>
+              <div>
+                <h3>Composable</h3>
+                <p>Break your UI into .nuv components, pass props, and compose pages from small focused pieces.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+</div>

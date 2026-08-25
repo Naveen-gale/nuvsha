@@ -1,0 +1,6 @@
+﻿import './styles/main.css';
+import { mount } from 'nuvsha';
+import App from './App.nuv';
+
+const container = document.getElementById('app');
+mount(App, container);

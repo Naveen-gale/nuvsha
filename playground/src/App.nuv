@@ -2,9 +2,12 @@
   import Card from "./components/Card.nuv"
 
   name = ""
+  
   count = 0
   show = true
   accepted = false
+  requestStatus = "request"
+  response = ""
 
   items = ["HTML", "CSS"]
 
@@ -23,6 +26,16 @@
 
   toggle = () => {
     show = !show
+  }
+
+  requestData = async () => {
+    requestStatus = "loading"
+
+    response = await new Promise(resolve => {
+      setTimeout(() => resolve("Request completed successfully."), 1000)
+    })
+
+    requestStatus = "success"
   }
 </script>
 
@@ -174,11 +187,15 @@
   <section>
     <h2>Async</h2>
 
-    <p>
-      Async test should be tested
-      using the async syntax currently
-      implemented by Nuvsha.
-    </p>
+    {if requestStatus === "request"}
+      <p>Request ready.</p>
+      <button onclick="requestData()">Send request</button>
+    {else if requestStatus === "loading"}
+      <p>Loading...</p>
+    {else}
+      <p>Success: {response}</p>
+      <button onclick="requestData()">Run again</button>
+    {/if}
   </section>
 
 </div>
