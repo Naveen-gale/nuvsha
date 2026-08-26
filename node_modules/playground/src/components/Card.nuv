@@ -1,9 +1,8 @@
-<div class="card">
-
-  <h2>{title}</h2>
-
-  <p>
-    Child count: {count}
+<div class="rounded-2xl border border-slate-700 bg-slate-900 p-6">
+  <h2 class="text-2xl font-bold text-white">
+    {title}
+  </h2>
+  <p class="mt-2 text-slate-400">
+    {description}
   </p>
-
 </div>

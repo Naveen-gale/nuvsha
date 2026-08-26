@@ -6,7 +6,8 @@
   "workspaces": [
     "nuvsha",
     "playground",
-    "my-app"
+    "my-app",
+    "tailwind-test"
   ],
   "scripts": {
     "test": "node --test nuvsha/tests/compiler.test.js"

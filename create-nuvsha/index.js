@@ -125,7 +125,7 @@ export async function createProject(projectName) {
   createEmptyDir('src/services', projectDir);
   createEmptyDir('src/store', projectDir);
   createEmptyDir('src/utils', projectDir);
-  createEmptyDir('src/assets', projectDir);
+  copyTemplateFile('src/assets/main.css', projectDir);
   ok('Creating project structure');
 
   // --- Write package.json with the correct project name ---
@@ -144,7 +144,9 @@ export async function createProject(projectName) {
       nuvsha: '^0.1.0'
     },
     devDependencies: {
-      vite: '^5.0.0'
+      vite: '^5.0.0',
+      '@tailwindcss/vite': '^4.0.0',
+      'tailwindcss': '^4.0.0'
     }
   };
   writeFileSync(

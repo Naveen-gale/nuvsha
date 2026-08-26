@@ -1,4 +1,5 @@
 import { mount } from 'nuvsha';
+import './main.css';
 import App from './App.nuv';
 
 

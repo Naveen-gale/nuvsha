@@ -1,201 +1,70 @@
 <script>
   import Card from "./components/Card.nuv"
-
-  name = ""
   
   count = 0
-  show = true
-  accepted = false
-  requestStatus = "request"
-  response = ""
-
-  items = ["HTML", "CSS"]
-
-  user = {
-    name: "Alex",
-    age: 20
-  }
-
-  addItem = () => {
-    items.push("JavaScript")
-  }
-
-  removeItem = () => {
-    items.pop()
-  }
-
-  toggle = () => {
-    show = !show
-  }
-
-  requestData = async () => {
-    requestStatus = "loading"
-
-    response = await new Promise(resolve => {
-      setTimeout(() => resolve("Request completed successfully."), 1000)
-    })
-
-    requestStatus = "success"
-  }
+  active = false
 </script>
 
+<div class="min-h-screen bg-slate-950 text-white">
 
-<div class="app">
+  <div class="mx-auto max-w-6xl px-6 py-20">
 
-  <h1>Nuvsha Phase 1–7 Test</h1>
+    <!-- Responsive classes test -->
+    <h1 class="text-3xl md:text-5xl font-bold">
+      Nuvsha
+    </h1>
 
+    <p class="mt-4 text-slate-400">
+      Build UI with less code.
+    </p>
 
-  <!-- ============================== -->
-  <!-- PHASE 2: EXPRESSIONS + EVENTS -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Expressions</h2>
-
-    <p>Name: {name}</p>
-
-    <p>Count: {count}</p>
-
-    <p>Next: {count + 1}</p>
-
-    <p>Uppercase: {name.toUpperCase()}</p>
-
-    <p>User: {user.name}</p>
-
-    <p>Age: {user.age}</p>
-
-    <p>Items: {items.length}</p>
-
-    <button onclick="count++">
-      Add
+    <button
+      class="mt-8 rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white hover:bg-indigo-600"
+    >
+      Get Started
     </button>
 
-    <button onclick="count--">
-      Remove
-    </button>
-
-    <button onclick="console.log('Hello ' + name)">
-      Greet
-    </button>
-  </section>
-
-
-  <!-- ============================== -->
-  <!-- PHASE 3: FORM + BINDING        -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Form Binding</h2>
-
-    <input
-      bind={name}
-      placeholder="Enter your name"
-    />
-
-    <p>Hello {name}</p>
-
-    <label>
-      <input
-        type="checkbox"
-        bind={accepted}
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <Card
+        title="Nuvsha"
+        description="Tailwind works inside Nuvsha components."
       />
+      <Card
+        title="Responsive"
+        description="Grid works perfectly."
+      />
+    </div>
 
-      Accept terms
-    </label>
-
-    <p>Accepted: {accepted}</p>
-
-    <select bind={name}>
-      <option value="">Choose name</option>
-      <option value="Alex">Alex</option>
-      <option value="John">John</option>
-      <option value="Nuvsha">Nuvsha</option>
-    </select>
-
-    <p>Selected: {name}</p>
-  </section>
-
-
-  <!-- ============================== -->
-  <!-- PHASE 4: REACTIVE LOOP         -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Reactive List</h2>
-
-    <ul>
-      {for item of items}
-        <li>{item}</li>
-      {/for}
-    </ul>
-
-    <button onclick="addItem()">
-      Add JavaScript
-    </button>
-
-    <button onclick="removeItem()">
-      Remove Last
-    </button>
-  </section>
-
-
-  <!-- ============================== -->
-  <!-- PHASE 5: COMPONENT PROPS       -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Component Props</h2>
-
-    <Card
-      title="Nuvsha Card"
-      count={count}
-    />
-  </section>
-
-
-  <!-- ============================== -->
-  <!-- PHASE 6: CONDITIONS             -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Conditional</h2>
-
-    <button onclick="toggle()">
-      Toggle Message
-    </button>
-
-    {if show}
-
-      <p>
-        Message is visible.
+    <!-- Reactive Test -->
+    <div class="mt-12 rounded-2xl bg-slate-900 p-8">
+      <p class="text-xl text-white">
+        Count: {count}
       </p>
 
-    {else}
+      <button
+        class="mt-4 rounded-lg bg-indigo-500 px-5 py-2 text-white hover:bg-indigo-600"
+        onclick="count++"
+      >
+        Add
+      </button>
+    </div>
 
-      <p>
-        Message is hidden.
-      </p>
+    <!-- Conditional Class / State Test -->
+    <div class="mt-12">
+      <button
+        class="rounded-lg px-4 py-2 bg-blue-500"
+        onclick="active = !active"
+      >
+        Toggle
+      </button>
+      
+      {if active}
+        <p class="mt-4 text-green-400 font-bold">Active is TRUE!</p>
+      {else}
+        <p class="mt-4 text-red-400 font-bold">Active is FALSE!</p>
+      {/if}
+    </div>
 
-    {/if}
-  </section>
-
-
-  <!-- ============================== -->
-  <!-- PHASE 7: ASYNC                  -->
-  <!-- ============================== -->
-
-  <section>
-    <h2>Async</h2>
-
-    {if requestStatus === "request"}
-      <p>Request ready.</p>
-      <button onclick="requestData()">Send request</button>
-    {else if requestStatus === "loading"}
-      <p>Loading...</p>
-    {else}
-      <p>Success: {response}</p>
-      <button onclick="requestData()">Run again</button>
-    {/if}
-  </section>
+  </div>
 
 </div>
