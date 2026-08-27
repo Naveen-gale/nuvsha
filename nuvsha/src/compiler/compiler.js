@@ -151,7 +151,7 @@ export function generate(componentNode) {
     code += userImports.trim() + '\n';
   }
 
-  code += `import { createComponent } from "nuvsha";\n`;
+  code += `import { createComponent, data, setContext, clearContext } from "nuvsha";\n`;
   code += `\n`;
 
   // ── The render function ──────────────────────────────────────────────────
@@ -176,7 +176,9 @@ export function generate(componentNode) {
 
   if (processedBody.trim()) {
     code += `  // Your script variables\n`;
+    code += `  setContext($update);\n`;
     code += processedBody.split('\n').map(l => l ? `  ${l}` : l).join('\n') + '\n';
+    code += `  clearContext();\n`;
     code += `\n`;
   }
 
@@ -683,6 +685,23 @@ function getPropsDestructure(componentNode, processedBody) {
     const match = dec.match(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=/);
     if (match) scriptVars.add(match[1]);
   }
+  
+  const { imports } = extractImports(componentNode.script);
+  const importMatches = imports.match(/import\s+(?:{\s*([^{}]+)\s*}|([a-zA-Z_$][a-zA-Z0-9_$]*))/g) || [];
+  for (const imp of importMatches) {
+    const defaultMatch = imp.match(/import\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+    if (defaultMatch) {
+      scriptVars.add(defaultMatch[1]);
+    } else {
+      const namedMatch = imp.match(/import\s+{\s*([^{}]+)\s*}/);
+      if (namedMatch) {
+        const names = namedMatch[1].split(',').map(s => s.trim().split(' as ')[0].trim());
+        for (const name of names) {
+          scriptVars.add(name);
+        }
+      }
+    }
+  }
 
   const usedVars = new Set();
   function visit(node) {
@@ -743,7 +762,7 @@ function getPropsDestructure(componentNode, processedBody) {
   
   componentNode.template.forEach(visit);
   
-  const keywords = new Set(['true', 'false', 'null', 'undefined', 'Math', 'Date', 'JSON', 'Object', 'Array', 'console', 'window', 'document', 'event', 'of', 'async', 'let', 'const', 'var']);
+  const keywords = new Set(['true', 'false', 'null', 'undefined', 'Math', 'Date', 'JSON', 'Object', 'Array', 'console', 'window', 'document', 'event', 'of', 'async', 'let', 'const', 'var', 'data']);
   const props = Array.from(usedVars).filter(v => !scriptVars.has(v) && !keywords.has(v));
   
   return props.length > 0 ? props.join(', ') + ',' : '';

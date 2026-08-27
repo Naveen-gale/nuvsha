@@ -1,70 +1,12 @@
 <script>
-  import Card from "./components/Card.nuv"
-  
-  count = 0
-  active = false
+  import { Router } from "nuvsha";
+  import { routes } from "./router/routes.js";
+  import Navbar from "./components/Navbar.nuv";
 </script>
 
-<div class="min-h-screen bg-slate-950 text-white">
-
-  <div class="mx-auto max-w-6xl px-6 py-20">
-
-    <!-- Responsive classes test -->
-    <h1 class="text-3xl md:text-5xl font-bold">
-      Nuvsha
-    </h1>
-
-    <p class="mt-4 text-slate-400">
-      Build UI with less code.
-    </p>
-
-    <button
-      class="mt-8 rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white hover:bg-indigo-600"
-    >
-      Get Started
-    </button>
-
-    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <Card
-        title="Nuvsha"
-        description="Tailwind works inside Nuvsha components."
-      />
-      <Card
-        title="Responsive"
-        description="Grid works perfectly."
-      />
-    </div>
-
-    <!-- Reactive Test -->
-    <div class="mt-12 rounded-2xl bg-slate-900 p-8">
-      <p class="text-xl text-white">
-        Count: {count}
-      </p>
-
-      <button
-        class="mt-4 rounded-lg bg-indigo-500 px-5 py-2 text-white hover:bg-indigo-600"
-        onclick="count++"
-      >
-        Add
-      </button>
-    </div>
-
-    <!-- Conditional Class / State Test -->
-    <div class="mt-12">
-      <button
-        class="rounded-lg px-4 py-2 bg-blue-500"
-        onclick="active = !active"
-      >
-        Toggle
-      </button>
-      
-      {if active}
-        <p class="mt-4 text-green-400 font-bold">Active is TRUE!</p>
-      {else}
-        <p class="mt-4 text-red-400 font-bold">Active is FALSE!</p>
-      {/if}
-    </div>
-
-  </div>
-
+<div class="min-h-screen bg-slate-950 text-white font-sans">
+  <Navbar />
+  <main class="max-w-4xl mx-auto p-8">
+    <Router routes={routes} />
+  </main>
 </div>

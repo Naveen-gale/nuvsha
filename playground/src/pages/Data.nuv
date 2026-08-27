@@ -1,0 +1,52 @@
+<script>
+  async function getUsers() {
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    if (!res.ok) throw new Error("Failed to fetch");
+    return res.json();
+  }
+
+  users = data(getUsers);
+</script>
+
+<div class="max-w-3xl mx-auto py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">User Data Directory</h1>
+
+  {if users.loading}
+    <div class="p-6 bg-blue-50 text-blue-700 rounded-lg animate-pulse">
+      Loading users...
+    </div>
+  {/if}
+
+  {if users.error}
+    <div class="p-6 bg-red-50 text-red-700 rounded-lg">
+      <p class="font-semibold">Error: {users.error.message}</p>
+      <button class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onclick="users.reload()">
+        Try Again
+      </button>
+    </div>
+  {/if}
+
+  {if users.data}
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-gray-800">Users ({users.data.length})</h2>
+        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm font-medium" onclick="users.reload()">
+          Refresh Data
+        </button>
+      </div>
+      <ul class="divide-y divide-gray-200">
+        {for user of users.data}
+          <li class="px-6 py-4 hover:bg-gray-50 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-900">{user.name}</p>
+              <p class="text-sm text-gray-500">{user.email}</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Active
+            </span>
+          </li>
+        {/for}
+      </ul>
+    </div>
+  {/if}
+</div>

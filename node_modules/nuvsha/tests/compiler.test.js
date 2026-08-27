@@ -244,7 +244,7 @@ test('Phase 2: createComponent is injected into render()', (t) => {
   const input = '<div></div>';
   const code = compile(input);
 
-  assert.ok(code.includes('import { createComponent } from "nuvsha"'), 'imports createComponent');
+  assert.ok(code.includes('import { createComponent, data, setContext, clearContext } from "nuvsha"'), 'imports createComponent and data');
   assert.ok(code.includes('const { $watch, $update } = createComponent()'), 'destructures inside render');
 });
 

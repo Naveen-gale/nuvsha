@@ -1,0 +1,10 @@
+<div class="space-y-4">
+  <h1 class="text-4xl font-bold">About Nuvsha</h1>
+  <p class="text-slate-300 max-w-2xl leading-relaxed">
+    Nuvsha is a lightweight frontend framework with a custom .nuv component language, 
+    compiler, runtime, and Vite integration.
+  </p>
+  <p class="text-slate-400">
+    This page demonstrates the routing capabilities introduced in Phase 10.
+  </p>
+</div>

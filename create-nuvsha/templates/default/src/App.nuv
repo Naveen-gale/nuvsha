@@ -1,9 +1,12 @@
 <script>
-  import Navbar from "./components/Navbar.nuv"
-  import Home from "./pages/Home.nuv"
+  import { Router } from "nuvsha";
+  import { routes } from "./router/routes.js";
+  import Navbar from "./components/Navbar.nuv";
 </script>
 
-<div class="app">
+<div class="min-h-screen bg-slate-950 text-white font-sans">
   <Navbar />
-  <Home />
+  <main class="max-w-4xl mx-auto p-8">
+    <Router routes={routes} />
+  </main>
 </div>

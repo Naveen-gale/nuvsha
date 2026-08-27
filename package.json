@@ -10,6 +10,6 @@
     "tailwind-test"
   ],
   "scripts": {
-    "test": "node --test nuvsha/tests/compiler.test.js"
+    "test": "node --test nuvsha/tests/*.test.js"
   }
 }

@@ -1,3 +1,9 @@
-<nav class="navbar">
-  <span class="navbar-brand">Nuvsha</span>
+<nav class="bg-slate-900 border-b border-slate-800 px-8 py-4">
+  <div class="max-w-4xl mx-auto flex items-center justify-between">
+    <div class="text-xl font-bold text-blue-500">My App</div>
+    <div class="flex space-x-6">
+      <a href="/" class="text-slate-300 hover:text-white transition-colors">Home</a>
+      <a href="/about" class="text-slate-300 hover:text-white transition-colors">About</a>
+    </div>
+  </div>
 </nav>

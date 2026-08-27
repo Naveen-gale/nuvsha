@@ -80,3 +80,21 @@ export function createComponent() {
 
   return { $watch, $update };
 }
+
+// ============================================================================
+// CONTEXT TRACKING (For runtime primitives like data() to trigger updates)
+// ============================================================================
+
+let currentUpdateContext = null;
+
+export function setContext(updateFn) {
+  currentUpdateContext = updateFn;
+}
+
+export function clearContext() {
+  currentUpdateContext = null;
+}
+
+export function getContext() {
+  return currentUpdateContext;
+}
