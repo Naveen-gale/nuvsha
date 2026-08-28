@@ -65,8 +65,8 @@ test('transformScript converts simplified variables', (t) => {
   const raw = 'name = "Alex"\n  count = 0\n';
   const transformed = transformScript(raw);
   
-  assert.ok(transformed.includes('let name = "Alex"'));
-  assert.ok(transformed.includes('  let count = 0'));
+  assert.ok(transformed.includes('let name = typeof props.name !== \'undefined\' ? props.name : "Alex"'));
+  assert.ok(transformed.includes('let count = typeof props.count !== \'undefined\' ? props.count : 0'));
 });
 
 test('Lexer tokenizes if blocks', (t) => {
@@ -112,8 +112,8 @@ test('Compiler generates event listeners for string and expression handlers', (t
   const code = compile(input);
   
   // Phase 2: event handlers now use `event` (not `e`) and support async/promises with $update()
-  assert.ok(code.includes('.onclick = (event) => { const $$res = count++; $update();'), 'string handler with event param and $update');
-  assert.ok(code.includes('.onclick = (event) => { const $$res = (() => count++)(event); $update();'), 'expression handler with event param and $update');
+  assert.ok(code.includes('.onclick = handleEvent((event) => { count++ }, $update);'), 'string handler with event param and $update');
+  assert.ok(code.includes('.onclick = handleEvent((event) => (() => count++)(event), $update);'), 'expression handler with event param and $update');
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -201,8 +201,8 @@ test('Simplified variables work alongside imports in a component', (t) => {
   // import hoisted to module level
   assert.ok(code.includes('import { getUser } from "./logic/user.js"'));
 
-  // variable becomes let inside render
-  assert.ok(code.includes('let user = getUser()'));
+  // variable becomes let inside render with props fallback
+  assert.ok(code.includes('let user = typeof props.user !== \'undefined\' ? props.user : getUser()'));
 
   // template expression
   assert.ok(code.includes('document.createTextNode(String(user.name))'));
@@ -235,16 +235,15 @@ test('Phase 2: Event handler uses `event` parameter for event.target access', (t
   const code = compile(input);
 
   // Must use `event` not `e` so event.target.value works
-  assert.ok(code.includes('.oninput = (event) =>'), 'uses event parameter');
+  assert.ok(code.includes('.oninput = handleEvent((event) => { name = event.target.value }, $update)'), 'uses event parameter');
   assert.ok(code.includes('name = event.target.value'), 'preserves event.target.value');
-  assert.ok(code.includes('$update()'), 'calls $update after event');
 });
 
 test('Phase 2: createComponent is injected into render()', (t) => {
   const input = '<div></div>';
   const code = compile(input);
 
-  assert.ok(code.includes('import { createComponent, data, setContext, clearContext } from "nuvsha"'), 'imports createComponent and data');
+  assert.ok(code.includes('import { createComponent, data, form, setContext, clearContext, handleEvent } from "nuvsha"'), 'imports createComponent and data');
   assert.ok(code.includes('const { $watch, $update } = createComponent()'), 'destructures inside render');
 });
 
@@ -379,4 +378,46 @@ test('Phase 7: async block compiles with loading and error states', (t) => {
   assert.ok(code.includes('buildSuccess'), 'creates success builder');
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 16 — Better Component System
+// ─────────────────────────────────────────────────────────────────────────────
 
+test('Phase 16: children keyword emits slot fragment projection', (t) => {
+  const input = '<div>{children}</div>';
+  const code = compile(input);
+
+  assert.ok(code.match(/const children\d+ = \(typeof props.children !== 'undefined' && props.children\) \? props.children : document.createDocumentFragment\(\);/), 'emits children resolution logic');
+  assert.ok(code.match(/appendChild\(children\d+\)/), 'appends children fragment');
+});
+
+test('Phase 16: component call passes children slot', (t) => {
+  const input = '<Card><p>Hello</p></Card>';
+  const code = compile(input);
+
+  assert.ok(code.match(/const slotFrag\d+ = document.createDocumentFragment\(\);/), 'creates slot fragment');
+  assert.ok(code.match(/children: slotFrag\d+/), 'passes fragment as children prop');
+});
+
+test('Phase 16: Component event handlers wrap $event', (t) => {
+  const input = '<Counter onchange="count = $event" onupdate={() => log($event)} />';
+  const code = compile(input);
+
+  assert.ok(code.includes('onchange: handleEvent(($event) => { count = $event }, $update)'), 'wraps string component event');
+  assert.ok(code.includes('onupdate: handleEvent(($event) => (() => log($event))($event), $update)'), 'wraps expression component event');
+});
+
+test('Phase 16: Default Props fallback in script transformation', (t) => {
+  const raw = 'title = "Untitled"\ncount = 0';
+  const transformed = transformScript(raw);
+
+  assert.ok(transformed.includes('let title = typeof props.title !== \'undefined\' ? props.title : "Untitled"'), 'emits default prop fallback for string');
+  assert.ok(transformed.includes('let count = typeof props.count !== \'undefined\' ? props.count : 0'), 'emits default prop fallback for number');
+});
+
+test('Phase 18: <form onsubmit> automatically calls event.preventDefault()', (t) => {
+  const input = '<form onsubmit="submit()"></form><form onsubmit={() => submit()}></form>';
+  const code = compile(input);
+
+  assert.ok(code.includes('handleEvent((event) => { event.preventDefault(); submit() }, $update)'), 'adds preventDefault to string handler');
+  assert.ok(code.includes('handleEvent((event) => { event.preventDefault(); return (() => submit())(event); }, $update)'), 'adds preventDefault to expression handler');
+});

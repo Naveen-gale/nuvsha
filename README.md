@@ -32,6 +32,7 @@ Nuvsha introduces `.nuv` single-file components, combining the simplicity of sta
   - Async States: `{async data = fetchPromise} ... {loading} ... {error} ... {/async}`
 - **Component System**: Reusable uppercase components (`<Card title="Hello" />`) with props and `<slot />` content projection.
 - **Built-in Client-Side Routing**: Simple SPA routing (`<Router routes={routes} />`) with browser history and link interception.
+- **Beginner-Friendly Compiler Errors**: Precise source locations, code frames, and helpful hints for syntax mistakes.
 - **Tailwind CSS Ready**: Seamless integration with Tailwind CSS v4 and Vite.
 - **Project Scaffolding**: Quickstart any project with `npx create-nuvsha`.
 
@@ -90,6 +91,14 @@ Explore the complete, beginner-friendly documentation in the [`docs/`](./docs/RE
   - [Reactivity System](./docs/runtime/reactivity.md)
   - [DOM Mounting](./docs/runtime/dom.md)
   - [Event Handling](./docs/runtime/events.md)
+- [Errors and Debugging](./docs/errors/overview.md)
+  - [Errors Overview](./docs/errors/overview.md)
+  - [Error Codes](./docs/errors/error-codes.md)
+- [Architecture & Conventions](./docs/architecture/project-structure.md)
+- [Performance & Production](./docs/performance/overview.md)
+  - [Performance Overview](./docs/performance/overview.md)
+  - [Production Builds](./docs/performance/production.md)
+  - [Best Practices](./docs/performance/best-practices.md)
 - [API Reference](./docs/api/runtime.md)
 - [Testing](./docs/testing/overview.md)
   - [Compiler Tests](./docs/testing/compiler-tests.md)

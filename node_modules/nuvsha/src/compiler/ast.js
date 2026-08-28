@@ -87,17 +87,6 @@ export class ComponentCallNode {
 }
 
 /**
- * Represents a <slot /> inside a child component.
- * When the parent passes children inside <Card>...</Card>,
- * those children render where <slot /> appears in the child template.
- */
-export class SlotNode {
-  constructor() {
-    this.type = 'Slot';
-  }
-}
-
-/**
  * Represents an {async expr} ... {loading} ... {error} ... {/async} block.
  *
  * Structure:

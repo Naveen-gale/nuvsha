@@ -5,7 +5,7 @@
       <a href="/" class="text-slate-300 hover:text-white transition-colors">Home</a>
       <a href="/about" class="text-slate-300 hover:text-white transition-colors">About</a>
       <a href="/contact" class="text-slate-300 hover:text-white transition-colors">Contact</a>
-      <a href="/data" class="text-slate-300 hover:text-white transition-colors">Data Fetching</a>
+      <a href="/data" class="text-slate-300 hover:text-white transition-colors">Data</a>
     </div>
   </div>
 </nav>

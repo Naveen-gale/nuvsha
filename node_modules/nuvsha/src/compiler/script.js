@@ -84,7 +84,9 @@ export function transformScript(rawScript) {
       if (!reserved.has(varName)) {
         if (!declaredVars.has(varName)) {
           declaredVars.add(varName);
-          return line.replace(varName, `let ${varName}`);
+          // Phase 16: Default Props fallback
+          const indent = line.substring(0, line.indexOf(varName));
+          return `${indent}let ${varName} = typeof props.${varName} !== 'undefined' ? props.${varName} : ${match[2]}`;
         } else {
           return line;
         }

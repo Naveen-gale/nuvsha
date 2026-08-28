@@ -4,6 +4,7 @@
   "description": "Nuvsha framework",
   "main": "src/index.js",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.js",
     "./vite-plugin": "./src/vite/plugin.js"

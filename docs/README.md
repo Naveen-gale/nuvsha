@@ -22,7 +22,8 @@ Nuvsha is a lightweight frontend framework created to make web development strai
 - [Variables](./language/variables.md) — Simplified reactive variables.
 - [Expressions](./language/expressions.md) — Dynamic text and attribute values `{...}`.
 - [Events](./language/events.md) — Handling user actions (`onclick`, `oninput`, etc.).
-- [Forms](./language/forms.md) — Two-way data binding with `bind={...}`.
+- [Forms](./language/forms.md) — Simple form submission, state, loading, and error handling.
+- [Binding](./language/binding.md) — Two-way data binding with `bind={...}`.
 - [Loops](./language/loops.md) — Rendering lists with `{for item of items}`.
 - [Conditions](./language/conditions.md) — Branching with `{if}`, `{else if}`, and `{else}`.
 - [Async Blocks](./language/async.md) — Handling promises with `{async}`, `{loading}`, and `{error}`.
@@ -58,10 +59,23 @@ Nuvsha is a lightweight frontend framework created to make web development strai
 - [DOM Mounting](./runtime/dom.md) — How `mount()` attaches elements to the page.
 - [Event Handling](./runtime/events.md) — How events trigger updates.
 
-### 8. API Reference
+### 8. Errors and Debugging
+- [Errors Overview](./errors/overview.md) — How to read Nuvsha compiler errors.
+- [Error Codes](./errors/error-codes.md) — Complete list of compiler error codes.
+- [Debugging Guide](./errors/debugging.md) — How to find and fix common mistakes.
+
+### 9. Architecture & Structure
+- [Project Architecture](./architecture/project-structure.md) — Folder conventions and recommended project structure.
+
+### 10. Performance & Production
+- [Performance Overview](./performance/overview.md) — How Nuvsha stays fast without a Virtual DOM.
+- [Production Builds](./performance/production.md) — Compiling, minifying, and code splitting.
+- [Best Practices](./performance/best-practices.md) — Tips for fast Nuvsha applications.
+
+### 10. API Reference
 - [Runtime API](./api/runtime.md) — Public exports from the `nuvsha` package.
 
-### 9. Testing
+### 10. Testing
 - [Testing Overview](./testing/overview.md) — How testing works in Nuvsha.
 - [Compiler Tests](./testing/compiler-tests.md) — Testing lexer, parser, and code generation.
 - [Application Tests](./testing/application-tests.md) — Testing components and runtime logic.

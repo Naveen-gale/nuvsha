@@ -1,4 +1,5 @@
 import { compile } from '../compiler/index.js';
+import { formatError } from '../compiler/error.js';
 
 /**
  * A Vite plugin to tell Vite how to handle .nuv files.
@@ -12,14 +13,28 @@ export default function nuvshaPlugin() {
     // This tells Vite: whenever you try to load a file that ends in .nuv, let me handle it.
     transform(code, id) {
       if (id.endsWith('.nuv')) {
-        // We use our compiler to turn the .nuv text into JavaScript
-        const jsCode = compile(code);
-        
-        // Return it to Vite
-        return {
-          code: jsCode,
-          map: null // We aren't building sourcemaps yet
-        };
+        try {
+          // We use our compiler to turn the .nuv text into JavaScript
+          const jsCode = compile(code, id);
+          
+          // Return it to Vite
+          return {
+            code: jsCode,
+            map: null // We aren't building sourcemaps yet
+          };
+        } catch (e) {
+          if (e.name === 'NuvshaError') {
+            const err = new Error(formatError(e));
+            err.id = id;
+            err.plugin = 'vite-plugin-nuvsha';
+            err.pluginCode = e.code;
+            if (e.line && e.column) {
+              err.loc = { file: id, line: e.line, column: e.column };
+            }
+            throw err;
+          }
+          throw e;
+        }
       }
     }
   };

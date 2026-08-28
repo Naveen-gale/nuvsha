@@ -120,8 +120,16 @@ function serializeProps(props) {
       if (value === true) {
         return `${key}: true`;
       } else if (typeof value === 'object' && value.type === 'expression') {
+        if (key.startsWith('on')) {
+          // Component event with expression body e.g. onchange={() => count++}
+          return `${key}: handleEvent(($event) => (${value.value})($event), $update)`;
+        }
         return `${key}: ${value.value}`;
       } else {
+        if (key.startsWith('on')) {
+          // Component event with string body e.g. onchange="count = $event"
+          return `${key}: handleEvent(($event) => { ${value} }, $update)`;
+        }
         const safe = String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
         return `${key}: "${safe}"`;
       }
@@ -151,7 +159,7 @@ export function generate(componentNode) {
     code += userImports.trim() + '\n';
   }
 
-  code += `import { createComponent, data, setContext, clearContext } from "nuvsha";\n`;
+  code += `import { createComponent, data, form, setContext, clearContext, handleEvent } from "nuvsha";\n`;
   code += `\n`;
 
   // ── The render function ──────────────────────────────────────────────────
@@ -223,7 +231,11 @@ export function generate(componentNode) {
             if (key.startsWith('on')) {
               // Event with expression body e.g. onclick={() => count++}
               // We wrap it so it calls $update() synchronously and after promise resolution
-              code += `  ${elName}.${key} = (event) => { const $$res = (${value.value})(event); $update(); if ($$res && typeof $$res.then === 'function') { $$res.then(() => $update()).catch(() => $update()); } };\n`;
+              if (tag === 'form' && key === 'onsubmit') {
+                code += `  ${elName}.${key} = handleEvent((event) => { event.preventDefault(); return (${value.value})(event); }, $update);\n`;
+              } else {
+                code += `  ${elName}.${key} = handleEvent((event) => (${value.value})(event), $update);\n`;
+              }
             } else {
               // Reactive attribute value e.g. value={count}
               code += `  ${elName}.setAttribute("${key}", String(${value.value}));\n`;
@@ -238,7 +250,11 @@ export function generate(componentNode) {
             // We compile "count++" into: (event) => { const $$res = count++; $update(); if ($$res && typeof $$res.then === 'function') ... }
             // The `event` variable is the real browser Event object.
             // This means `event.target.value` works naturally.
-            code += `  ${elName}.${key} = (event) => { const $$res = ${value}; $update(); if ($$res && typeof $$res.then === 'function') { $$res.then(() => $update()).catch(() => $update()); } };\n`;
+            if (tag === 'form' && key === 'onsubmit') {
+              code += `  ${elName}.${key} = handleEvent((event) => { event.preventDefault(); ${value} }, $update);\n`;
+            } else {
+              code += `  ${elName}.${key} = handleEvent((event) => { ${value} }, $update);\n`;
+            }
           } else {
             const safeValue = String(value).replace(/"/g, '\\"');
             code += `  ${elName}.setAttribute("${key}", "${safeValue}");\n`;
@@ -272,10 +288,18 @@ export function generate(componentNode) {
       code += `  const ${textName} = document.createTextNode("${safe}");\n`;
       return textName;
 
-    // ── Phase 2: Expression binding {expr} ─────────────────────────────────
+    // ── Phase 2 & 16: Expression binding {expr} and {children} ─────────────
     } else if (node.type === 'Expression') {
-      const expName = nextId('exp');
       const expr = node.expression;
+      
+      // Phase 16: {children} projection
+      if (expr.trim() === 'children') {
+        const slotName = nextId('children');
+        code += `  const ${slotName} = (typeof props.children !== 'undefined' && props.children) ? props.children : document.createDocumentFragment();\n`;
+        return slotName;
+      }
+      
+      const expName = nextId('exp');
       code += `  const ${expName} = document.createTextNode(String(${expr}));\n`;
       code += `  $watch(() => String(${expr}), (val) => ${expName}.textContent = val);\n`;
       return expName;
@@ -293,8 +317,8 @@ export function generate(componentNode) {
           if (childName) code += `  ${slotFragName}.appendChild(${childName});\n`;
         }
         finalPropsObj = propsStr === '{}'
-          ? `{ $$slot: ${slotFragName} }`
-          : propsStr.replace(/}$/, `, $$slot: ${slotFragName} }`);
+          ? `{ children: ${slotFragName} }`
+          : propsStr.replace(/}$/, `, children: ${slotFragName} }`);
       }
 
       let hasDynamicProps = false;
@@ -325,8 +349,8 @@ export function generate(componentNode) {
             code += `    ${slotFragName}.appendChild(${c});\n`;
           }
           innerPropsObj = propsStr === '{}'
-            ? `{ $$slot: ${slotFragName} }`
-            : propsStr.replace(/}$/, `, $$slot: ${slotFragName} }`);
+            ? `{ children: ${slotFragName} }`
+            : propsStr.replace(/}$/, `, children: ${slotFragName} }`);
         }
         code += `    return ${node.name}(${innerPropsObj});\n`;
         code += `  }\n`;
@@ -358,12 +382,6 @@ export function generate(componentNode) {
         return elName;
       }
 
-    // ── Phase 7: <slot /> — content projection ────────────────────────────
-    } else if (node.type === 'Slot') {
-      const slotName = nextId('slot');
-      // $$slot is the DocumentFragment passed from the parent
-      code += `  const ${slotName} = (typeof $$slot !== 'undefined' && $$slot) ? $$slot : document.createDocumentFragment();\n`;
-      return slotName;
 
     // ── Phase 6: {if cond} ... {else} ... {/if} ───────────────────────────
     } else if (node.type === 'Conditional') {
@@ -762,10 +780,10 @@ function getPropsDestructure(componentNode, processedBody) {
   
   componentNode.template.forEach(visit);
   
-  const keywords = new Set(['true', 'false', 'null', 'undefined', 'Math', 'Date', 'JSON', 'Object', 'Array', 'console', 'window', 'document', 'event', 'of', 'async', 'let', 'const', 'var', 'data']);
-  const props = Array.from(usedVars).filter(v => !scriptVars.has(v) && !keywords.has(v));
+  const keywords = new Set(['true', 'false', 'null', 'undefined', 'Math', 'Date', 'JSON', 'Object', 'Array', 'console', 'window', 'document', 'event', '$event', 'props', 'of', 'async', 'let', 'const', 'var', 'data']);
+  const propsToDestructure = Array.from(usedVars).filter(v => !scriptVars.has(v) && !keywords.has(v));
   
-  return props.length > 0 ? props.join(', ') + ',' : '';
+  return propsToDestructure.length > 0 ? propsToDestructure.join(', ') + ',' : '';
 }
 
 /**

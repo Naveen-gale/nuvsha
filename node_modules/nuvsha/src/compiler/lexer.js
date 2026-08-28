@@ -1,3 +1,5 @@
+import { NuvshaError } from './error.js';
+
 /**
  * Token types for our lexer
  */
@@ -18,93 +20,117 @@ export const TokenType = {
   BLOCK_ASYNC_CLOSE: 'BLOCK_ASYNC_CLOSE',     // {/async}
 };
 
-
 /**
  * A simple lexer (tokenizer) that scans a .nuv string
  * and turns it into an array of tokens.
  * @param {string} input 
+ * @param {string} filename
  * @returns {Array} Array of token objects
  */
-export function tokenize(input) {
+export function tokenize(input, filename = '') {
   const tokens = [];
   let current = 0;
+  let line = 1;
+  let column = 1;
+
+  function advance(n = 1) {
+    for (let i = 0; i < n; i++) {
+      if (input[current] === '\n') {
+        line++;
+        column = 1;
+      } else {
+        column++;
+      }
+      current++;
+    }
+  }
 
   while (current < input.length) {
     let char = input[current];
+    const startLine = line;
+    const startColumn = column;
 
     // If we see a '<', it's the start of a tag
     if (char === '<') {
       
       // ── HTML Comment handling ───────────────────────────────────────────────
-      // Ignore <!-- comments --> entirely so they don't break the parser.
       if (input.slice(current, current + 4) === '<!--') {
-        current += 4;
+        advance(4);
         while (current < input.length) {
           if (input.slice(current, current + 3) === '-->') {
-            current += 3;
+            advance(3);
             break;
           }
-          current++;
+          advance();
         }
         continue;
       }
       
       // ── Script block special handling ─────────────────────────────────────
-      // <script> content must be read as raw text — NOT processed for { } 
-      // expressions or nested tags. Otherwise `import { Foo }` would have its
-      // { } broken into an EXPRESSION token, corrupting the import statement.
-      //
-      // Detect "<script>" (possibly with whitespace before '>'):
       const scriptOpenMatch = input.slice(current).match(/^<script\s*>/i);
       if (scriptOpenMatch) {
-        current += scriptOpenMatch[0].length; // skip past <script>
-        tokens.push({ type: TokenType.TAG_OPEN, value: 'script', attributes: {}, isSelfClosing: false });
+        advance(scriptOpenMatch[0].length);
+        tokens.push({ type: TokenType.TAG_OPEN, value: 'script', attributes: {}, isSelfClosing: false, line: startLine, column: startColumn });
 
-        // Read raw text until </script>
         let scriptContent = '';
         const closeTag = '</script>';
+        const contentStartLine = line;
+        const contentStartColumn = column;
+        
         while (current < input.length) {
           if (input.slice(current, current + closeTag.length).toLowerCase() === closeTag) {
-            current += closeTag.length; // skip past </script>
+            advance(closeTag.length);
             break;
           }
           scriptContent += input[current];
-          current++;
+          advance();
         }
 
         if (scriptContent) {
-          tokens.push({ type: TokenType.TEXT, value: scriptContent });
+          tokens.push({ type: TokenType.TEXT, value: scriptContent, line: contentStartLine, column: contentStartColumn });
         }
-        tokens.push({ type: TokenType.TAG_CLOSE, value: 'script' });
+        tokens.push({ type: TokenType.TAG_CLOSE, value: 'script', line, column: column - closeTag.length });
         continue;
       }
-      // ── End of script block handling ──────────────────────────────────────
-
+      
       // Check if it's a closing tag like "</div>"
       if (input[current + 1] === '/') {
-        current += 2; // skip past "</"
+        advance(2);
         let tagName = '';
         while (input[current] !== '>' && current < input.length) {
           tagName += input[current];
-          current++;
+          advance();
         }
-        current++; // skip past ">"
+        if (input[current] !== '>') {
+            throw new NuvshaError({
+                code: 'NV1001',
+                message: 'Unexpected end of input while parsing closing tag',
+                file: filename,
+                line: startLine,
+                column: startColumn,
+                hint: `Ensure closing tag </${tagName}> is properly terminated with '>'.`,
+                phase: 'LEXER',
+                source: input
+            });
+        }
+        advance(); // skip '>'
         
         tokens.push({
           type: TokenType.TAG_CLOSE,
-          value: tagName.trim()
+          value: tagName.trim(),
+          line: startLine,
+          column: startColumn
         });
         continue;
       }
       
-      // Otherwise, it's an opening tag like "<div>" or "<img src='...'>"
-      current++; // skip past "<"
+      // Otherwise, it's an opening tag
+      advance(); // skip '<'
       let tagName = '';
       
-      // Read the tag name until we hit a space, '>', or '/'
       while (input[current] !== '>' && input[current] !== ' ' && input[current] !== '/' && current < input.length) {
         tagName += input[current];
-        current++;
+        advance();
       }
       
       let attributes = {};
@@ -115,38 +141,66 @@ export function tokenize(input) {
         let char = input[current];
         
         if (char === ' ' || char === '\n' || char === '\r' || char === '\t') {
-          current++;
+          advance();
           continue;
         }
         
         if (char === '/') {
           isSelfClosing = true;
-          current++;
+          advance();
           continue;
         }
+        
+        const attrStartLine = line;
+        const attrStartColumn = column;
         
         // We found an attribute name
         let attrName = '';
         while (current < input.length && input[current] !== '=' && input[current] !== ' ' && input[current] !== '\n' && input[current] !== '\r' && input[current] !== '\t' && input[current] !== '>' && input[current] !== '/') {
           attrName += input[current];
-          current++;
+          advance();
+        }
+
+        if (attrName.length === 0) {
+            throw new NuvshaError({
+                code: 'NV1009',
+                message: 'Invalid attribute syntax',
+                file: filename,
+                line: attrStartLine,
+                column: attrStartColumn,
+                hint: 'Ensure attributes are properly formatted.',
+                phase: 'LEXER',
+                source: input
+            });
         }
         
         if (input[current] === '=') {
-          current++; // skip '='
+          advance(); // skip '='
           
           let quote = input[current];
           if (quote === '"' || quote === "'") {
-            current++; // skip quote
+            advance(); // skip quote
             let attrValue = '';
             while (current < input.length && input[current] !== quote) {
               attrValue += input[current];
-              current++;
+              advance();
             }
-            current++; // skip closing quote
+            if (input[current] !== quote) {
+                throw new NuvshaError({
+                    code: 'NV1009',
+                    message: 'Unclosed attribute value',
+                    file: filename,
+                    line: attrStartLine,
+                    column: attrStartColumn,
+                    hint: `Ensure attribute ${attrName} has a matching closing quote.`,
+                    phase: 'LEXER',
+                    source: input
+                });
+            }
+            advance(); // skip closing quote
             attributes[attrName] = attrValue;
           } else if (quote === '{') {
-            current++; // skip '{'
+            advance(); // skip '{'
             let attrValue = '';
             let braceCount = 1;
             while (current < input.length && braceCount > 0) {
@@ -155,30 +209,62 @@ export function tokenize(input) {
               if (braceCount > 0) {
                 attrValue += input[current];
               }
-              current++;
+              advance();
+            }
+            if (braceCount > 0) {
+                throw new NuvshaError({
+                    code: 'NV1004',
+                    message: 'Unclosed expression in attribute',
+                    file: filename,
+                    line: attrStartLine,
+                    column: attrStartColumn,
+                    hint: `Ensure expression for attribute ${attrName} is properly closed with '}'.`,
+                    phase: 'LEXER',
+                    source: input
+                });
             }
             attributes[attrName] = { type: 'expression', value: attrValue };
           } else {
              // unquoted attribute value
+             if (input[current] === '>' || input[current] === ' ') {
+                 throw new NuvshaError({
+                    code: 'NV1009',
+                    message: 'Missing attribute value',
+                    file: filename,
+                    line: attrStartLine,
+                    column: attrStartColumn,
+                    hint: `Attribute ${attrName} has an equals sign but no value.`,
+                    phase: 'LEXER',
+                    source: input
+                 });
+             }
              let attrValue = '';
              while (current < input.length && input[current] !== ' ' && input[current] !== '\n' && input[current] !== '\r' && input[current] !== '\t' && input[current] !== '>' && input[current] !== '/') {
                attrValue += input[current];
-               current++;
+               advance();
              }
              attributes[attrName] = attrValue;
           }
-        } else if (attrName.length > 0) {
+        } else {
           // boolean attribute like 'disabled'
           attributes[attrName] = true;
         }
       }
-      current++; // skip past ">"
+      
+      if (input[current] !== '>') {
+          throw new NuvshaError({
+              code: 'NV1001',
+              message: 'Unexpected end of input while parsing opening tag',
+              file: filename,
+              line: startLine,
+              column: startColumn,
+              hint: `Ensure tag <${tagName}> is properly terminated with '>'.`,
+              phase: 'LEXER',
+              source: input
+          });
+      }
+      advance(); // skip '>'
 
-      // ── Void elements are always self-closing ─────────────────────────────
-      // HTML has "void elements" that can never have children: <input>, <br>, etc.
-      // They don't need a closing tag. If we don't mark them self-closing here,
-      // the parser will push them onto the stack and accidentally treat following
-      // siblings as their children.
       const VOID_ELEMENTS = new Set([
         'input', 'br', 'hr', 'img', 'meta', 'link', 'area',
         'base', 'col', 'embed', 'param', 'source', 'track', 'wbr',
@@ -191,14 +277,16 @@ export function tokenize(input) {
         type: TokenType.TAG_OPEN,
         value: tagName.trim(),
         attributes: attributes,
-        isSelfClosing: isSelfClosing
+        isSelfClosing: isSelfClosing,
+        line: startLine,
+        column: startColumn
       });
       continue;
     }
 
     // If we see a '{', it's an expression
     if (char === '{') {
-      current++; // skip '{'
+      advance(); // skip '{'
       let expression = '';
       let braceCount = 1;
       while (current < input.length && braceCount > 0) {
@@ -207,7 +295,20 @@ export function tokenize(input) {
         if (braceCount > 0) {
           expression += input[current];
         }
-        current++;
+        advance();
+      }
+      
+      if (braceCount > 0) {
+          throw new NuvshaError({
+              code: 'NV1004',
+              message: 'Unclosed expression block',
+              file: filename,
+              line: startLine,
+              column: startColumn,
+              hint: 'Ensure all opening { braces have a matching closing } brace.',
+              phase: 'LEXER',
+              source: input
+          });
       }
       
       const trimmedExpr = expression.trim();
@@ -215,65 +316,66 @@ export function tokenize(input) {
       if (trimmedExpr.startsWith('if ')) {
         tokens.push({
           type: TokenType.BLOCK_IF_OPEN,
-          condition: trimmedExpr.slice(3).trim()
+          condition: trimmedExpr.slice(3).trim(),
+          line: startLine, column: startColumn
         });
       } else if (trimmedExpr === 'else') {
-        tokens.push({ type: TokenType.BLOCK_ELSE });
+        tokens.push({ type: TokenType.BLOCK_ELSE, line: startLine, column: startColumn });
       } else if (trimmedExpr.startsWith('else if ')) {
-        // {else if condition} — must check before plain 'else'
         tokens.push({
           type: TokenType.BLOCK_ELSE_IF,
-          condition: trimmedExpr.slice(8).trim()
+          condition: trimmedExpr.slice(8).trim(),
+          line: startLine, column: startColumn
         });
       } else if (trimmedExpr === '/if') {
-        tokens.push({ type: TokenType.BLOCK_IF_CLOSE });
+        tokens.push({ type: TokenType.BLOCK_IF_CLOSE, line: startLine, column: startColumn });
       } else if (trimmedExpr.startsWith('for ')) {
         tokens.push({
           type: TokenType.BLOCK_FOR_OPEN,
-          expression: trimmedExpr.slice(4).trim()
+          expression: trimmedExpr.slice(4).trim(),
+          line: startLine, column: startColumn
         });
       } else if (trimmedExpr === '/for') {
-        tokens.push({ type: TokenType.BLOCK_FOR_CLOSE });
+        tokens.push({ type: TokenType.BLOCK_FOR_CLOSE, line: startLine, column: startColumn });
       } else if (trimmedExpr.startsWith('async ')) {
-        // {async varName = someAsyncFn()}
-        // Parse: varName = expression
-        const asyncBody = trimmedExpr.slice(6).trim(); // everything after 'async '
+        const asyncBody = trimmedExpr.slice(6).trim();
         const eqIdx = asyncBody.indexOf('=');
         if (eqIdx !== -1) {
           const varName = asyncBody.slice(0, eqIdx).trim();
-          const expression = asyncBody.slice(eqIdx + 1).trim();
-          tokens.push({ type: TokenType.BLOCK_ASYNC_OPEN, varName, expression });
+          const expr = asyncBody.slice(eqIdx + 1).trim();
+          tokens.push({ type: TokenType.BLOCK_ASYNC_OPEN, varName, expression: expr, line: startLine, column: startColumn });
         } else {
-          // No assignment: {async someExpr} — treat expr as both varName and expression
-          tokens.push({ type: TokenType.BLOCK_ASYNC_OPEN, varName: '$$asyncData', expression: asyncBody });
+          tokens.push({ type: TokenType.BLOCK_ASYNC_OPEN, varName: '$$asyncData', expression: asyncBody, line: startLine, column: startColumn });
         }
       } else if (trimmedExpr === 'loading') {
-        tokens.push({ type: TokenType.BLOCK_ASYNC_LOADING });
+        tokens.push({ type: TokenType.BLOCK_ASYNC_LOADING, line: startLine, column: startColumn });
       } else if (trimmedExpr === 'error') {
-        tokens.push({ type: TokenType.BLOCK_ASYNC_ERROR });
+        tokens.push({ type: TokenType.BLOCK_ASYNC_ERROR, line: startLine, column: startColumn });
       } else if (trimmedExpr === '/async') {
-        tokens.push({ type: TokenType.BLOCK_ASYNC_CLOSE });
+        tokens.push({ type: TokenType.BLOCK_ASYNC_CLOSE, line: startLine, column: startColumn });
       } else {
         tokens.push({
           type: TokenType.EXPRESSION,
-          value: trimmedExpr
+          value: trimmedExpr,
+          line: startLine, column: startColumn
         });
       }
       continue;
     }
 
-    // If it's not a '<' and not '{', it must be text inside a tag
+    // Text inside a tag
     let text = '';
     while (current < input.length && input[current] !== '<' && input[current] !== '{') {
       text += input[current];
-      current++;
+      advance();
     }
 
-    // Only add text tokens if they are not just empty space
     if (text.trim().length > 0) {
       tokens.push({
         type: TokenType.TEXT,
-        value: text
+        value: text,
+        line: startLine,
+        column: startColumn
       });
     }
   }

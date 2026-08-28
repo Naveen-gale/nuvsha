@@ -53,29 +53,14 @@ function createEmptyDir(relPath, projectDir) {
  * Creates a brand-new Nuvsha project in a folder named `projectName`.
  *
  * Generated structure:
- *
  *   my-app/
  *   ├── package.json
  *   ├── vite.config.js
  *   ├── index.html
  *   └── src/
  *       ├── App.nuv           ← root component
- *       ├── main.js           ← entry point
- *       ├── pages/
- *       │   └── Home.nuv
- *       ├── components/
- *       │   ├── Navbar.nuv
- *       │   └── Button.nuv
- *       ├── layouts/
- *       │   └── MainLayout.nuv
- *       ├── hooks/            ← empty (add your own hooks here)
- *       ├── logic/            ← empty (add reusable logic here)
- *       ├── services/         ← empty (add API/service code here)
- *       ├── store/            ← empty (add state stores here)
- *       ├── utils/            ← empty (add helper utilities here)
- *       └── assets/           ← empty (put images, fonts, etc. here)
+ *       └── main.js           ← entry point
  *
- * You are NOT required to use every directory.
  * Add your own folders freely — the compiler doesn't care about structure.
  *
  * @param {string} projectName - The name the user passed in, e.g. "my-app"
@@ -112,19 +97,9 @@ export async function createProject(projectName) {
   // --- Copy Source Template Files ---
   copyTemplateFile('src/main.js', projectDir);
   copyTemplateFile('src/App.nuv', projectDir);
-  copyTemplateFile('src/pages/Home.nuv', projectDir);
-  copyTemplateFile('src/components/Navbar.nuv', projectDir);
-  copyTemplateFile('src/components/Button.nuv', projectDir);
-  copyTemplateFile('src/layouts/MainLayout.nuv', projectDir);
   ok('Copying template');
 
-  // --- Create Empty Convention Directories ---
-  // These are useful defaults. You are free to ignore them or add your own.
-  createEmptyDir('src/hooks', projectDir);
-  createEmptyDir('src/logic', projectDir);
-  createEmptyDir('src/services', projectDir);
-  createEmptyDir('src/store', projectDir);
-  createEmptyDir('src/utils', projectDir);
+  // --- Create Basic Structure ---
   copyTemplateFile('src/assets/main.css', projectDir);
   ok('Creating project structure');
 

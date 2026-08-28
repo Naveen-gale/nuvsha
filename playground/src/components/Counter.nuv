@@ -1,0 +1,15 @@
+<script>
+  value = 0
+</script>
+
+<div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+  <button class="w-10 h-10 rounded-full bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100 flex items-center justify-center transition-colors" onclick="props.onchange(value - 1)">
+    -
+  </button>
+  <span class="text-2xl font-black text-gray-900 min-w-[3rem] text-center">
+    {value}
+  </span>
+  <button class="w-10 h-10 rounded-full bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100 flex items-center justify-center transition-colors" onclick="props.onchange(value + 1)">
+    +
+  </button>
+</div>
