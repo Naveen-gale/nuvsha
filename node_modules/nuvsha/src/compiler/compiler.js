@@ -237,9 +237,11 @@ export function generate(componentNode) {
                 code += `  ${elName}.${key} = handleEvent((event) => (${value.value})(event), $update);\n`;
               }
             } else {
-              // Reactive attribute value e.g. value={count}
-              code += `  ${elName}.setAttribute("${key}", String(${value.value}));\n`;
-              code += `  $watch(() => String(${value.value}), (val) => ${elName}.setAttribute("${key}", val));\n`;
+              // Reactive attribute value e.g. value={count} or disabled={loading}
+              const attrUpdater = nextId('updateAttr');
+              code += `  const ${attrUpdater} = (val) => { if (typeof val === 'boolean') { if (val) ${elName}.setAttribute("${key}", ""); else ${elName}.removeAttribute("${key}"); } else { ${elName}.setAttribute("${key}", String(val)); } };\n`;
+              code += `  ${attrUpdater}(${value.value});\n`;
+              code += `  $watch(() => ${value.value}, ${attrUpdater});\n`;
             }
             continue;
           }

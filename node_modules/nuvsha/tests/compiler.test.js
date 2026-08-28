@@ -421,3 +421,10 @@ test('Phase 18: <form onsubmit> automatically calls event.preventDefault()', (t)
   assert.ok(code.includes('handleEvent((event) => { event.preventDefault(); submit() }, $update)'), 'adds preventDefault to string handler');
   assert.ok(code.includes('handleEvent((event) => { event.preventDefault(); return (() => submit())(event); }, $update)'), 'adds preventDefault to expression handler');
 });
+
+test('Phase 18: Boolean dynamic attributes remove attribute when false', (t) => {
+  const input = '<input disabled={loading}>';
+  const code = compile(input);
+
+  assert.ok(code.match(/if \(typeof val === 'boolean'\) \{ if \(val\) (el\d+)\.setAttribute\("disabled", ""\); else \1\.removeAttribute\("disabled"\); \} else \{ \1\.setAttribute\("disabled", String\(val\)\); \}/), 'dynamically removes false boolean attributes');
+});
