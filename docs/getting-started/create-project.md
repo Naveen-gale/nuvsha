@@ -1,63 +1,28 @@
-# Creating a Project
+# Create a Project
 
-## What It Is
+The easiest way to start building with Nuvsha is by using the official CLI tool.
 
-`create-nuvsha` is the official command-line tool used to quickly scaffold (generate) a new Nuvsha project with all necessary configurations already set up.
-
----
-
-## Why It Exists
-
-Starting a new project from scratch often involves creating configuration files, setting up build tools like Vite, configuring Tailwind CSS, and structuring folders. 
-
-`create-nuvsha` does all this for you in one step so you can focus immediately on writing code.
-
----
-
-## Basic Example
-
-Open your terminal and run:
+Open your terminal and run the following command. Replace `my-app` with whatever you want to name your project:
 
 ```bash
-npx create-nuvsha my-first-app
+npx create-nuvsha my-app
 ```
 
-Then follow the on-screen instructions:
+The CLI will automatically scaffold a new project with the recommended directory structure, Vite configuration, and Tailwind CSS ready to go.
+
+## Start the Development Server
+
+Once the project is created, navigate into your new folder and install the dependencies:
 
 ```bash
-cd my-first-app
+cd my-app
 npm install
+```
+
+Now, start the local development server:
+
+```bash
 npm run dev
 ```
 
-Your browser will open a local development server (typically at `http://localhost:5173`) showing your running Nuvsha application!
-
----
-
-## What the Scaffolded Project Includes
-
-When you generate a project with `create-nuvsha`, you get:
-
-1. **Vite Development Server**: Instant hot module reloading (updates your app immediately when you save a file) and automatically opens the browser.
-2. **Nuvsha Vite Plugin**: Compiles `.nuv` files on the fly.
-3. **Tailwind CSS v4**: Pre-configured utility-first styling.
-4. **Starter UI**: A polished `App.nuv` demonstrating Nuvsha syntax (expressions, state, and events).
-5. **Nuvsha Branding**: Default favicon (`nuvsha.svg`) and branding.
-
----
-
-## Available Scripts
-
-Inside your project folder, you can run:
-
-| Command | Description |
-| :--- | :--- |
-| `npm run dev` | Starts the local development server with fast live reloading. |
-| `npm run build` | Builds your application for production in the `dist/` directory. |
-| `npm run preview` | Previews your production build locally. |
-
----
-
-## Next Steps
-
-Check out the [Project Structure](./project-structure.md) guide to understand what each file inside your new project does.
+Your terminal will display a local URL (usually `http://localhost:5173/`). Open that link in your browser to see your new Nuvsha application running!

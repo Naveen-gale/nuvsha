@@ -1,74 +1,32 @@
-# Tailwind CSS Integration
+# Tailwind CSS
 
-## What It Is
+Nuvsha comes fully pre-configured to work with **Tailwind CSS v4** right out of the box when you use `create-nuvsha`.
 
-Nuvsha comes with **first-class support for Tailwind CSS (v4)** out of the box.
+## How it works
 
-When you scaffold a new project using `create-nuvsha`, Tailwind is already configured and integrated into the Vite build process.
+Tailwind v4 is integrated via Vite (`@tailwindcss/vite`). 
 
----
+Your `src/assets/main.css` contains the Tailwind configuration directing it to scan your Nuvsha files:
 
-## 1. Setup in Nuvsha
+```css
+/* src/assets/main.css */
+@import "tailwindcss";
+@source "../**/*.nuv";
+```
 
-In a standard project:
+## Syntax
 
-1. **Vite Plugin**: The `@tailwindcss/vite` plugin is included in `vite.config.js`:
-   ```javascript
-   import { defineConfig } from 'vite';
-   import nuvshaPlugin from 'nuvsha/vite-plugin';
-   import tailwindcss from '@tailwindcss/vite';
-
-   export default defineConfig({
-     plugins: [
-       nuvshaPlugin(),
-       tailwindcss()
-     ]
-   });
-   ```
-
-2. **CSS Entry**: `src/assets/main.css` imports Tailwind:
-   ```css
-   @import "tailwindcss";
-   ```
-
----
-
-## 2. Using Utility Classes in `.nuv` Files
-
-You can use all standard Tailwind utility classes in your `.nuv` templates:
+Simply use Tailwind classes on your HTML elements. The compiler will detect them and inject the optimized CSS into your browser automatically.
 
 ```html
-<div class="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-  <div class="max-w-md w-full p-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl">
-    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
-      Welcome to Nuvsha
-    </h1>
-    <p class="mt-2 text-slate-400 text-sm">
-      Tailwind utility classes work seamlessly inside .nuv components.
-    </p>
-    <button class="mt-6 w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors">
-      Get Started
-    </button>
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+  <div class="md:flex">
+    <div class="p-8">
+      <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Nuvsha Framework</div>
+      <p class="mt-2 text-slate-500">Building UI with less code and familiar HTML.</p>
+    </div>
   </div>
 </div>
 ```
 
----
-
-## 3. Responsive & State Modifiers
-
-Modifiers like `hover:`, `focus:`, `active:`, and responsive breakpoints like `sm:`, `md:`, `lg:` work without any extra setup:
-
-```html
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  <button class="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 rounded-lg px-4 py-2 text-white transition-colors">
-    Click Me
-  </button>
-</div>
-```
-
----
-
-## 4. Production Optimization
-
-When you run `npm run build`, Tailwind v4 scans your `.nuv` templates and generates an optimized CSS bundle containing only the classes used in your application.
+You can use hovering, dark mode, arbitrary values, and everything else Tailwind offers.

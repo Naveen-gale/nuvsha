@@ -6,10 +6,16 @@
   "workspaces": [
     "nuvsha",
     "playground",
-    "my-app",
+    "nuvsha-master-test",
+    "create-nuvsha",
     "tailwind-test"
   ],
   "scripts": {
-    "test": "node --test nuvsha/tests/*.test.js"
+    "test": "node --test nuvsha/tests/*.test.js create-nuvsha/tests/*.test.js tests/*.test.js",
+    "test:nuvsha": "node --test nuvsha/tests/*.test.js",
+    "test:cli": "node --test create-nuvsha/tests/*.test.js",
+    "master-test:dev": "npm --prefix nuvsha-master-test run dev",
+    "master-test:build": "npm --prefix nuvsha-master-test run build",
+    "master-test:preview": "npm --prefix nuvsha-master-test run preview"
   }
 }

@@ -132,8 +132,24 @@ test('creates src/App.nuv', async (t) => {
     assert.ok(existsSync(nuvPath), 'src/App.nuv should exist');
     
     const content = readFileSync(nuvPath, 'utf-8');
-    assert.ok(content.includes('Hello Nuvsha!'), 'App.nuv should contain the welcome text');
+    assert.ok(content.includes('Nuvsha'), 'App.nuv should contain Nuvsha branding');
     assert.ok(content.includes('<div'), 'App.nuv should contain a div');
+  } finally {
+    process.chdir(originalCwd);
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('creates public/nuvsha.svg', async (t) => {
+  const tmpDir = makeTmpDir();
+  const originalCwd = process.cwd();
+
+  try {
+    process.chdir(tmpDir);
+    await createProject('test-app');
+    
+    const svgPath = join(tmpDir, 'test-app', 'public', 'nuvsha.svg');
+    assert.ok(existsSync(svgPath), 'public/nuvsha.svg should exist');
   } finally {
     process.chdir(originalCwd);
     rmSync(tmpDir, { recursive: true, force: true });

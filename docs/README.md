@@ -1,82 +1,23 @@
 # Nuvsha Documentation
 
-Welcome to the official documentation for **Nuvsha**!
+Nuvsha is a lightweight, zero-VDOM JavaScript framework that lets you build fast, reactive user interfaces with less code. It embraces familiar HTML and JavaScript while simplifying reactivity.
 
-Nuvsha is a lightweight frontend framework created to make web development straightforward, fun, and fast.
+## Learn Nuvsha
 
----
+Follow this step-by-step path to master Nuvsha:
 
-## Table of Contents
+1. [Getting Started](./getting-started/installation.md)
+2. [Nuvsha Language](./language/overview.md)
+3. [Building UI](./ui/html.md)
+4. [Reactivity](./reactivity/overview.md)
+5. [Components](./ui/components.md)
+6. [Forms](./forms/overview.md)
+7. [Logic](./logic/conditions.md)
+8. [Routing](./routing/overview.md)
+9. [Styling](./styling/overview.md)
+10. [Application Architecture](./architecture/overview.md)
+11. [Compiler](./compiler/overview.md)
+12. [Testing](./testing/overview.md)
+13. [Performance & Production](./performance/overview.md)
 
-### 1. Getting Started
-- [Introduction](./getting-started/introduction.md) — What is Nuvsha and why was it created?
-- [Installation](./getting-started/installation.md) — Requirements and installation guide.
-- [Create a Project](./getting-started/create-project.md) — How to scaffold a new project with `create-nuvsha`.
-- [Project Structure](./getting-started/project-structure.md) — Understanding the files in a Nuvsha app.
-- [Your First App](./getting-started/first-app.md) — Step-by-step tutorial building your first interactive app.
-
-### 2. Language Guide
-- [Language Overview](./language/overview.md) — The `.nuv` single-file component syntax.
-- [Templates](./language/templates.md) — Writing HTML markup in `.nuv` files.
-- [Script Block](./language/script.md) — Writing logic inside `<script>` blocks.
-- [Variables](./language/variables.md) — Simplified reactive variables.
-- [Expressions](./language/expressions.md) — Dynamic text and attribute values `{...}`.
-- [Events](./language/events.md) — Handling user actions (`onclick`, `oninput`, etc.).
-- [Forms](./language/forms.md) — Simple form submission, state, loading, and error handling.
-- [Binding](./language/binding.md) — Two-way data binding with `bind={...}`.
-- [Loops](./language/loops.md) — Rendering lists with `{for item of items}`.
-- [Conditions](./language/conditions.md) — Branching with `{if}`, `{else if}`, and `{else}`.
-- [Async Blocks](./language/async.md) — Handling promises with `{async}`, `{loading}`, and `{error}`.
-- [Data Fetching](./language/data.md) — Using the `data()` API for reactive network requests.
-- [Components](./language/components.md) — Using reusable `.nuv` components in templates.
-
-### 3. Components
-- [Component Overview](./components/overview.md) — Thinking in Nuvsha components.
-- [Creating Components](./components/creating-components.md) — Writing and importing components.
-- [Props](./components/props.md) — Passing data from parent to child components.
-- [Component Structure](./components/component-structure.md) — Best practices for organizing components.
-
-### 4. Styling
-- [Styling Overview](./styling/overview.md) — How to style Nuvsha applications.
-- [Tailwind CSS](./styling/tailwind.md) — Using Tailwind CSS v4 in Nuvsha.
-
-### 5. Routing
-- [Routing Overview](./routing/overview.md) — Single-page application routing without page reloads.
-- [Routes](./routing/routes.md) — Defining routes in `routes.js`.
-- [Navigation](./routing/navigation.md) — Linking between pages and browser history.
-- [Project Structure](./routing/project-structure.md) — Structuring multi-page Nuvsha applications.
-
-### 6. Compiler Internals
-- [Compiler Overview](./compiler/overview.md) — How Nuvsha transforms `.nuv` files into JavaScript.
-- [Lexer](./compiler/lexer.md) — Converting text into tokens.
-- [Parser](./compiler/parser.md) — Converting tokens into an Abstract Syntax Tree (AST).
-- [AST (Abstract Syntax Tree)](./compiler/ast.md) — Tree representation of components.
-- [Code Generation](./compiler/code-generation.md) — Emitting standard DOM JavaScript.
-
-### 7. Runtime Internals
-- [Runtime Overview](./runtime/overview.md) — The browser engine of Nuvsha.
-- [Reactivity System](./runtime/reactivity.md) — How `$watch` and `$update` work.
-- [DOM Mounting](./runtime/dom.md) — How `mount()` attaches elements to the page.
-- [Event Handling](./runtime/events.md) — How events trigger updates.
-
-### 8. Errors and Debugging
-- [Errors Overview](./errors/overview.md) — How to read Nuvsha compiler errors.
-- [Error Codes](./errors/error-codes.md) — Complete list of compiler error codes.
-- [Debugging Guide](./errors/debugging.md) — How to find and fix common mistakes.
-
-### 9. Architecture & Structure
-- [Project Architecture](./architecture/project-structure.md) — Folder conventions and recommended project structure.
-- [Identity & Editor](./architecture/identity.md) — Language identity, branding, and VS Code extension architecture.
-
-### 10. Performance & Production
-- [Performance Overview](./performance/overview.md) — How Nuvsha stays fast without a Virtual DOM.
-- [Production Builds](./performance/production.md) — Compiling, minifying, and code splitting.
-- [Best Practices](./performance/best-practices.md) — Tips for fast Nuvsha applications.
-
-### 10. API Reference
-- [Runtime API](./api/runtime.md) — Public exports from the `nuvsha` package.
-
-### 10. Testing
-- [Testing Overview](./testing/overview.md) — How testing works in Nuvsha.
-- [Compiler Tests](./testing/compiler-tests.md) — Testing lexer, parser, and code generation.
-- [Application Tests](./testing/application-tests.md) — Testing components and runtime logic.
+Or jump straight into the [Examples](./examples/counter.md) and [Syntax Reference](./reference/syntax.md).

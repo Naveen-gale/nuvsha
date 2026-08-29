@@ -92,6 +92,7 @@ export async function createProject(projectName) {
   // --- Copy Root Template Files ---
   copyTemplateFile('index.html', projectDir);
   copyTemplateFile('vite.config.js', projectDir);
+  copyTemplateFile('public/nuvsha.svg', projectDir);
   ok('Configuring Vite');
 
   // --- Copy Source Template Files ---

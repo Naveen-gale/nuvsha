@@ -1,46 +1,45 @@
-# Routes Definition
+# Routes
 
-## What It Is
+To configure routing, you define a map of URL paths to Nuvsha components, and pass it to the `<Router>` component.
 
-In Nuvsha, routes are configured in a dedicated JavaScript file (`src/router/routes.js`) as an array of route objects.
+## Syntax
 
----
-
-## Route Object Format
-
-Each route in the `routes` array has:
-- `path` (string): The URL path to match (e.g. `"/"`, `"/about"`, `"/contact"`).
-- `component` (Function): The page component imported from a `.nuv` file.
+First, define your routes in a JavaScript file (usually `src/router/routes.js`):
 
 ```javascript
-import Home from "../pages/Home.nuv";
-import About from "../pages/About.nuv";
-import Contact from "../pages/Contact.nuv";
-import NotFound from "../pages/NotFound.nuv";
+// src/router/routes.js
+import { Home } from "../pages/Home.nuv"
+import { About } from "../pages/About.nuv"
+import { NotFound } from "../pages/NotFound.nuv"
 
-export const routes = [
-  { path: "/", component: Home },
-  { path: "/about", component: About },
-  { path: "/contact", component: Contact },
-  { path: "*", component: NotFound }
-];
+export const routes = {
+  "/": Home,
+  "/about": About,
+  "*": NotFound
+}
 ```
 
----
+Then, use the `<Router>` component in your main `App.nuv` shell:
 
-## 404 (Not Found) Route
+```html
+<!-- src/App.nuv -->
+<script>
+  import { Router } from "nuvsha"
+  import { routes } from "./router/routes.js"
+  
+  import { Navbar } from "./components/Navbar.nuv"
+</script>
 
-Use the wildcard `*` path to catch any URL that does not match an existing route:
-
-```javascript
-{ path: "*", component: NotFound }
+<div class="app-layout">
+  <Navbar />
+  
+  <main>
+    <!-- The router will render the correct component here based on the URL -->
+    <Router routes={routes} />
+  </main>
+</div>
 ```
 
-When a user visits an unknown path (e.g. `/random-page`), Nuvsha will automatically render your `NotFound` component.
+## What happens
 
----
-
-## Important Rules
-
-1. Keep your route definitions in a separate file (e.g. `src/router/routes.js`) rather than putting them directly in `App.nuv`.
-2. Static exact matching is used for Phase 10 (e.g. `/about` matches only `/about`).
+When the user visits `/`, the `<Router>` component mounts `Home.nuv`. When they visit `/about`, it mounts `About.nuv`.

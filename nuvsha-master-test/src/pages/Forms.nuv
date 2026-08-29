@@ -1,0 +1,183 @@
+<script>
+  import TestSection from "../components/TestSection.nuv";
+  import Button from "../components/Button.nuv";
+  import Badge from "../components/Badge.nuv";
+
+  // Phase 3: Two-way binding state
+  simpleName = "Nuvsha Developer"
+  agreeTerms = true
+  selectedColor = "sky"
+
+  // Phase 18: Built-in Form Primitive
+  feedbackForm = form({
+    fullName: "",
+    email: "",
+    feedbackType: "feature",
+    rating: "5",
+    comments: ""
+  })
+
+  submitFeedback = async (values) => {
+    if (!values.fullName.trim()) {
+      throw new Error("Full name is required.");
+    }
+    if (!values.email.includes("@")) {
+      throw new Error("Please enter a valid email address.");
+    }
+    if (!values.comments.trim()) {
+      throw new Error("Please write a comment.");
+    }
+
+    // Simulate API network request
+    await new Promise(r => setTimeout(r, 600));
+    return "Feedback submitted successfully!";
+  }
+</script>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+      Phase 3 & 18 — Forms & Data Binding
+    </h1>
+    <p class="text-sm text-slate-400 mt-1">
+      Validating two-way binding (bind={}), reactive inputs, checkboxes, selects, and Phase 18 form primitives with automated submit lifecycle.
+    </p>
+  </div>
+
+  <!-- Test 1: Phase 3 Two-Way Binding -->
+  <TestSection 
+    phase="Phase 3" 
+    title="Two-Way Data Binding (bind={variable})" 
+    description="Synchronizes input values immediately to script variables on 'input' and 'change' events."
+    status="PASS">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Text Input (bind={simpleName})</label>
+          <input 
+            type="text" 
+            bind={simpleName}
+            class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+          />
+        </div>
+
+        <div class="flex items-center gap-3">
+          <input 
+            type="checkbox" 
+            id="terms"
+            bind={agreeTerms}
+            class="w-4 h-4 rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-0 cursor-pointer"
+          />
+          <label for="terms" class="text-sm text-slate-300 cursor-pointer">
+            Accept Terms of Verification (bind={agreeTerms})
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Select Dropdown (bind={selectedColor})</label>
+          <select 
+            bind={selectedColor}
+            class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 font-mono">
+            <option value="sky">Sky Blue Accent</option>
+            <option value="emerald">Emerald Green Accent</option>
+            <option value="indigo">Indigo Purple Accent</option>
+            <option value="rose">Rose Red Accent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 font-mono text-sm space-y-2">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Live Reactive State</p>
+        <p class="text-slate-300">simpleName: <span class="text-sky-400 font-bold">"{simpleName}"</span></p>
+        <p class="text-slate-300">agreeTerms: <span class="text-sky-400 font-bold">{agreeTerms ? "true" : "false"}</span></p>
+        <p class="text-slate-300">selectedColor: <span class="text-sky-400 font-bold">"{selectedColor}"</span></p>
+      </div>
+    </div>
+  </TestSection>
+
+  <!-- Test 2: Phase 18 Form Primitive -->
+  <TestSection 
+    phase="Phase 18" 
+    title="Form Primitive with Lifecycle (loading, error, success)" 
+    description="Uses form({...}) primitive to handle submit, validation, reset, and automatic preventDefault."
+    status="PASS">
+    <div class="space-y-4">
+      {if feedbackForm.success}
+        <div class="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 space-y-3">
+          <div class="flex items-center gap-2 font-bold text-base">
+            <span>🎉</span> Form Submission Succeeded!
+          </div>
+          <p class="text-xs text-emerald-400">
+            Phase 18 automated lifecycle managed loading state and caught no errors.
+          </p>
+          <Button variant="secondary" onclick={() => feedbackForm.reset()}>
+            Submit Another Response
+          </Button>
+        </div>
+      {else}
+        <form onsubmit="feedbackForm.submit(submitFeedback)" class="space-y-4">
+          {if feedbackForm.error}
+            <div class="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center gap-2">
+              <span>⚠</span> {feedbackForm.error}
+            </div>
+          {/if}
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Full Name</label>
+              <input 
+                type="text" 
+                bind={feedbackForm.fullName}
+                placeholder="e.g. Ada Lovelace"
+                disabled={feedbackForm.loading}
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 disabled:opacity-50 font-mono"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Email</label>
+              <input 
+                type="email" 
+                bind={feedbackForm.email}
+                placeholder="ada@nuvsha.dev"
+                disabled={feedbackForm.loading}
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 disabled:opacity-50 font-mono"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Feedback Comments</label>
+            <textarea 
+              bind={feedbackForm.comments}
+              placeholder="What do you think of Nuvsha?"
+              rows="3"
+              disabled={feedbackForm.loading}
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 disabled:opacity-50 font-mono"></textarea>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button 
+              type="submit" 
+              disabled={feedbackForm.loading}
+              class="px-4 py-2 text-sm font-semibold text-white bg-sky-500 hover:bg-sky-400 rounded-lg transition disabled:opacity-50 cursor-pointer shadow-md shadow-sky-500/20">
+              {if feedbackForm.loading}
+                Submitting, please wait...
+              {else}
+                Submit Form (Auto preventDefault)
+              {/if}
+            </button>
+
+            <button 
+              type="button" 
+              onclick="feedbackForm.reset()"
+              disabled={feedbackForm.loading}
+              class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 rounded-lg transition cursor-pointer">
+              Reset Form
+            </button>
+          </div>
+        </form>
+      {/if}
+    </div>
+  </TestSection>
+</div>

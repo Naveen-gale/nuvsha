@@ -1,51 +1,33 @@
 # Navigation
 
-## What It Is
+You can navigate between routes using standard HTML links or programmatic functions.
 
-Navigation is how users move between different pages in your Nuvsha application.
+## HTML Links (Declarative)
 
----
-
-## 1. Declarative Navigation (Links)
-
-You can use standard HTML anchor tags (`<a>`) in your components:
+Nuvsha's router automatically intercepts standard same-origin `<a href="...">` clicks. You don't need a special `<Link>` component.
 
 ```html
-<!-- src/components/Navbar.nuv -->
-<nav class="flex space-x-4">
-  <a href="/" class="nav-link">Home</a>
-  <a href="/about" class="nav-link">About</a>
-  <a href="/contact" class="nav-link">Contact</a>
+<nav>
+  <a href="/">Home</a>
+  <a href="/about">About</a>
 </nav>
 ```
 
-### How Link Interception Works
-- When the user clicks an internal link (e.g. `<a href="/about">`), Nuvsha automatically intercepts the click event.
-- It prevents the browser from reloading the page, calls `history.pushState()`, and renders the new route.
-- External links (like `<a href="https://google.com">` or `<a target="_blank">`) are **not** intercepted and behave normally.
+When a user clicks one of these links, the browser URL updates instantly, and the `<Router>` swaps the component, completely avoiding a full page refresh. External links (e.g., `href="https://google.com"`) are ignored and behave normally.
 
----
+## Programmatic Navigation
 
-## 2. Programmatic Navigation (`navigate`)
-
-If you need to change pages from JavaScript (for example, after a button click or form submission), import the `navigate` function from `nuvsha`:
+If you need to navigate inside JavaScript logic (like after a form submission), you can use the `navigate()` function.
 
 ```html
 <script>
   import { navigate } from "nuvsha"
-
-  function goToHome() {
-    navigate("/")
+  
+  handleSuccess = () => {
+    // Do something...
+    navigate("/dashboard")
   }
 </script>
 
-<button onclick={goToHome}>
-  Go to Home Page
-</button>
+<button onclick="handleSuccess()">Go to Dashboard</button>
 ```
-
----
-
-## 3. Browser Back and Forward Buttons
-
-Nuvsha listens to the browser's `popstate` event. When the user clicks the browser's **Back** or **Forward** buttons, the Router updates the active view without reloading the page.

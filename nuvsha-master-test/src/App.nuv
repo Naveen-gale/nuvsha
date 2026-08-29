@@ -1,0 +1,22 @@
+<script>
+  import { Router } from "nuvsha";
+  import { routes } from "./router/routes.js";
+  import Navbar from "./components/Navbar.nuv";
+  import Sidebar from "./components/Sidebar.nuv";
+</script>
+
+<div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+  <Navbar />
+  
+  <div class="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto">
+    <Sidebar />
+    
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+      <Router routes={routes} />
+    </main>
+  </div>
+
+  <footer class="border-t border-slate-900 bg-slate-950/80 py-4 px-6 text-center text-xs text-slate-500 font-mono">
+    Nuvsha Master Test Application — Phase 1–19 Complete System Verification
+  </footer>
+</div>

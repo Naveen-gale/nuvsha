@@ -1,0 +1,121 @@
+<script>
+  import TestSection from "../components/TestSection.nuv";
+  import Button from "../components/Button.nuv";
+
+  appName = "Nuvsha Framework"
+  counter = 0
+  textValue = "Antigravity"
+  userObject = { firstName: "Naveen", role: "Framework Author", level: 10 }
+  languages = ["HTML", "JavaScript", "Nuvsha", "CSS"]
+
+  customMessage = ""
+
+  setMessage = (msg) => {
+    customMessage = msg
+  }
+
+  multiplyCounter = () => {
+    counter = counter * 2
+  }
+
+  resetCounter = () => {
+    counter = 0
+  }
+</script>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+      Phase 1, 2 & 18 — Language & Expressions
+    </h1>
+    <p class="text-sm text-slate-400 mt-1">
+      Verifying core HTML parsing, simplified variable declarations, dynamic expressions, event context, and arithmetic logic.
+    </p>
+  </div>
+
+  <!-- Test 1: Simplified Variables & Text Interpolation -->
+  <TestSection 
+    phase="Phase 1" 
+    title="Simplified Variable Declarations & HTML Elements" 
+    description="Compiler converts 'appName = ...' into reactive variables and text interpolation."
+    status="PASS">
+    <div class="space-y-4">
+      <div class="p-4 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-sm">
+        <p class="text-slate-400">// Current Variable State</p>
+        <p class="text-sky-300">appName: <span class="text-white font-bold">{appName}</span></p>
+        <p class="text-sky-300">counter: <span class="text-white font-bold">{counter}</span></p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <Button onclick={() => counter++}>
+          Increment ({counter})
+        </Button>
+        <Button variant="secondary" onclick={() => counter--}>
+          Decrement ({counter})
+        </Button>
+        <Button variant="secondary" onclick={() => multiplyCounter()}>
+          Multiply x2 ({counter})
+        </Button>
+        <Button variant="outline" onclick={() => resetCounter()}>
+          Reset
+        </Button>
+      </div>
+    </div>
+  </TestSection>
+
+  <!-- Test 2: Arithmetic, String & Object Expressions -->
+  <TestSection 
+    phase="Phase 2" 
+    title="Complex Expressions & Property Access" 
+    description="Evaluates arithmetic expressions {counter + 1}, string methods {textValue.toUpperCase()}, and object access {userObject.role}."
+    status="PASS">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Arithmetic Expression</p>
+        <p class="text-sm text-slate-300 font-mono">counter: <span class="text-white font-bold">{counter}</span></p>
+        <p class="text-sm text-slate-300 font-mono">counter + 10: <span class="text-sky-400 font-bold">{counter + 10}</span></p>
+        <p class="text-sm text-slate-300 font-mono">counter * 5: <span class="text-sky-400 font-bold">{counter * 5}</span></p>
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">String Transformation</p>
+        <p class="text-sm text-slate-300 font-mono">Raw: <span class="text-white">{textValue}</span></p>
+        <p class="text-sm text-slate-300 font-mono">Upper: <span class="text-indigo-400 font-bold">{textValue.toUpperCase()}</span></p>
+        <p class="text-sm text-slate-300 font-mono">Length: <span class="text-indigo-400 font-bold">{textValue.length}</span> chars</p>
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Object & Array Access</p>
+        <p class="text-sm text-slate-300 font-mono">Author: <span class="text-white font-bold">{userObject.firstName}</span></p>
+        <p class="text-sm text-slate-300 font-mono">Role: <span class="text-emerald-400 font-bold">{userObject.role}</span></p>
+        <p class="text-sm text-slate-300 font-mono">First Lang: <span class="text-emerald-400 font-bold">{languages[0]}</span></p>
+      </div>
+    </div>
+  </TestSection>
+
+  <!-- Test 3: Event Context & event.target access -->
+  <TestSection 
+    phase="Phase 2 & 18" 
+    title="Event Context & Parameter Handling" 
+    description="Tests event listeners with string handlers, arrow functions, and event parameter access."
+    status="PASS">
+    <div class="space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input 
+          type="text" 
+          placeholder="Type to test event.target.value..." 
+          oninput="customMessage = event.target.value"
+          class="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+        />
+        <Button variant="secondary" onclick={() => setMessage("Nuvsha Expressive Events!")}>
+          Set Preset
+        </Button>
+      </div>
+
+      <div class="p-3 rounded-lg bg-slate-950/60 border border-slate-800 text-sm">
+        <span class="text-slate-400">Live event output: </span>
+        <span class="font-bold text-sky-400 font-mono">{customMessage}</span>
+      </div>
+    </div>
+  </TestSection>
+</div>

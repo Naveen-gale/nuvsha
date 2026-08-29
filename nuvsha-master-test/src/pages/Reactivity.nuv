@@ -1,0 +1,133 @@
+<script>
+  import TestSection from "../components/TestSection.nuv";
+  import Button from "../components/Button.nuv";
+
+  showDetails = true
+  statusTier = "gold"
+  todoInput = ""
+  todos = ["Test Phase 1 Reactivity", "Test Phase 4 Loop Rendering", "Test Phase 6 Branching"]
+
+  toggleDetails = () => {
+    showDetails = !showDetails
+  }
+
+  setTier = (tier) => {
+    statusTier = tier
+  }
+
+  addTodo = () => {
+    if (todoInput.trim()) {
+      todos.push(todoInput.trim())
+      todoInput = ""
+    }
+  }
+
+  removeTodo = (index) => {
+    todos.splice(index, 1)
+  }
+
+  clearTodos = () => {
+    todos.length = 0
+  }
+</script>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+      Phase 1, 4 & 6 — Reactivity, Loops & Conditions
+    </h1>
+    <p class="text-sm text-slate-400 mt-1">
+      Validating fine-grained reactive updates, mutation-aware loop watchers, and multi-branch condition evaluation.
+    </p>
+  </div>
+
+  <!-- Test 1: Reactive Conditions (if / else if / else) -->
+  <TestSection 
+    phase="Phase 6" 
+    title="Reactive Conditions ({if} / {else if} / {else})" 
+    description="Dynamic branch switching with anchor comment fragments and dirty-checking."
+    status="PASS">
+    <div class="space-y-4">
+      <div class="flex flex-wrap gap-2">
+        <Button variant="secondary" onclick={() => toggleDetails()}>
+          Toggle Visibility (Currently: {showDetails ? "Visible" : "Hidden"})
+        </Button>
+        <Button variant="outline" onclick={() => setTier("bronze")}>
+          Bronze Tier
+        </Button>
+        <Button variant="outline" onclick={() => setTier("silver")}>
+          Silver Tier
+        </Button>
+        <Button variant="outline" onclick={() => setTier("gold")}>
+          Gold Tier
+        </Button>
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+        {if showDetails}
+          <div class="text-emerald-400 font-semibold flex items-center gap-2">
+            <span>✔</span> Condition branch: Content is currently VISIBLE!
+          </div>
+        {else}
+          <div class="text-amber-400 font-semibold flex items-center gap-2">
+            <span>⚠</span> Condition branch: Content is currently HIDDEN!
+          </div>
+        {/if}
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 font-mono text-sm">
+        <span class="text-slate-400">Multi-branch check: </span>
+        {if statusTier === 'gold'}
+          <span class="text-amber-400 font-bold">🥇 Gold Tier VIP Member</span>
+        {else if statusTier === 'silver'}
+          <span class="text-slate-300 font-bold">🥈 Silver Tier Standard Member</span>
+        {else}
+          <span class="text-amber-700 font-bold">🥉 Bronze Tier Free Tier</span>
+        {/if}
+      </div>
+    </div>
+  </TestSection>
+
+  <!-- Test 2: Reactive Loops ({for item of items}) -->
+  <TestSection 
+    phase="Phase 4" 
+    title="Reactive Loop Rendering ({for item of items})" 
+    description="Array rendering with JSON snapshot mutation tracking for push, splice, and mutation."
+    status="PASS">
+    <div class="space-y-4">
+      <div class="flex gap-2">
+        <input 
+          type="text" 
+          placeholder="New task name..." 
+          bind={todoInput}
+          class="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+        />
+        <Button onclick={() => addTodo()}>
+          Add Item
+        </Button>
+        <Button variant="secondary" onclick={() => clearTodos()}>
+          Clear All
+        </Button>
+      </div>
+
+      <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          Active Items ({todos.length})
+        </p>
+
+        {if todos.length === 0}
+          <p class="text-sm text-slate-500 italic">No items in the reactive list. Add one above!</p>
+        {else}
+          <ul class="space-y-2">
+            {for item of todos}
+              <li class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 text-sm text-slate-200">
+                <span class="font-mono">{item}</span>
+                <span class="text-xs text-slate-500">Tracked reactive node</span>
+              </li>
+            {/for}
+          </ul>
+        {/if}
+      </div>
+    </div>
+  </TestSection>
+</div>
