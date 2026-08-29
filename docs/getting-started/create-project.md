@@ -38,11 +38,11 @@ Your browser will open a local development server (typically at `http://localhos
 
 When you generate a project with `create-nuvsha`, you get:
 
-1. **Vite Development Server**: Instant hot module reloading (updates your app immediately when you save a file).
+1. **Vite Development Server**: Instant hot module reloading (updates your app immediately when you save a file) and automatically opens the browser.
 2. **Nuvsha Vite Plugin**: Compiles `.nuv` files on the fly.
 3. **Tailwind CSS v4**: Pre-configured utility-first styling.
-4. **Client-Side Routing**: Ready-to-use multi-page routing with sample pages (`Home`, `About`, `NotFound`).
-5. **Sample Components**: Pre-made reusable navbar and pages.
+4. **Starter UI**: A polished `App.nuv` demonstrating Nuvsha syntax (expressions, state, and events).
+5. **Nuvsha Branding**: Default favicon (`nuvsha.svg`) and branding.
 
 ---
 

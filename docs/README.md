@@ -66,6 +66,7 @@ Nuvsha is a lightweight frontend framework created to make web development strai
 
 ### 9. Architecture & Structure
 - [Project Architecture](./architecture/project-structure.md) — Folder conventions and recommended project structure.
+- [Identity & Editor](./architecture/identity.md) — Language identity, branding, and VS Code extension architecture.
 
 ### 10. Performance & Production
 - [Performance Overview](./performance/overview.md) — How Nuvsha stays fast without a Virtual DOM.
