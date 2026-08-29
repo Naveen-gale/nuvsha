@@ -1,0 +1,59 @@
+<script>
+  import Search from "./Search.nuv"
+  import { dashboardData } from "../data/dashboard.js"
+  
+  notifications = dashboardData.notifications
+  showNotifications = false
+  
+  unreadCount = () => notifications.filter(n => !n.read).length
+  
+  markAsRead = (id) => {
+    const n = notifications.find(n => n.id === id)
+    if (n) n.read = true
+  }
+</script>
+
+<header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 h-16 flex items-center justify-between px-6">
+  <div class="flex items-center gap-4">
+    <div class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <div class="w-8 h-8 rounded-md bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white">NA</div>
+      <span class="hidden md:inline-block">NAdashboard</span>
+    </div>
+  </div>
+  
+  <div class="flex-1 max-w-md mx-6 hidden md:block">
+    <Search placeholder="Search dashboard..." oninput="console.log('Search:', event.detail)" />
+  </div>
+  
+  <div class="flex items-center gap-4 relative">
+    <button onclick="showNotifications = !showNotifications" class="relative p-2 text-slate-400 hover:text-white transition-colors rounded-full hover:bg-slate-800">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      {if unreadCount() > 0}
+        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-950"></span>
+      {/if}
+    </button>
+    
+    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 overflow-hidden cursor-pointer">
+      <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff" alt="User" class="w-full h-full object-cover" />
+    </div>
+    
+    {if showNotifications}
+      <div class="absolute top-full right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col z-50">
+        <div class="p-3 border-b border-slate-800 flex justify-between items-center">
+          <h4 class="font-medium text-sm text-white">Notifications</h4>
+          <span class="text-xs text-slate-500">{unreadCount()} unread</span>
+        </div>
+        <div class="max-h-80 overflow-y-auto">
+          {for n of notifications}
+            <div class={"p-3 border-b border-slate-800/50 last:border-0 hover:bg-slate-800/30 transition-colors " + (n.read ? "opacity-50" : "")}>
+              <p class="text-sm text-slate-200">{n.message}</p>
+              {if !n.read}
+                <button onclick="markAsRead(n.id)" class="text-xs text-sky-400 mt-1 hover:text-sky-300">Mark as read</button>
+              {/if}
+            </div>
+          {/for}
+        </div>
+      </div>
+    {/if}
+  </div>
+</header>\n

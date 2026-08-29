@@ -1,0 +1,78 @@
+<script>
+  import TestSection from "../components/TestSection.nuv";
+  import Button from "../components/Button.nuv";
+  import Badge from "../components/Badge.nuv";
+
+  fetchServerStatus = async () => {
+    await new Promise(r => setTimeout(r, 400));
+    return {
+      status: "Operational",
+      uptime: "99.99%",
+      region: "us-east-1",
+      latency: "14ms"
+    };
+  }
+
+  currentPromise = fetchServerStatus()
+
+  triggerRefresh = () => {
+    currentPromise = fetchServerStatus()
+  }
+</script>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+      Phase 7 — Template Async Blocks
+    </h1>
+    <p class="text-sm text-slate-400 mt-1">
+      Validating compiler-native async template handling using &#123;async&#125;, &#123;loading&#125;, and &#123;error&#125; blocks.
+    </p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <Button onclick={() => triggerRefresh()}>
+      🔄 Trigger New Async Promise
+    </Button>
+  </div>
+
+  <!-- Test 1: Native {async} Block -->
+  <TestSection 
+    phase="Phase 7" 
+    title="Template {async} Block with {loading} and {error}" 
+    description="Compiler emits anchor comments and manages resolution lifecycles directly within the template."
+    status="PASS">
+    <div class="space-y-4">
+      {async s = currentPromise}
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-base font-bold text-white">Live System Telemetry</h4>
+            <Badge text={s.status} variant="success" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-400">Uptime: </span>
+              <strong class="text-emerald-400">{s.uptime}</strong>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-400">Region: </span>
+              <strong class="text-sky-400">{s.region}</strong>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-400">Latency: </span>
+              <strong class="text-indigo-400">{s.latency}</strong>
+            </div>
+          </div>
+        </div>
+      {loading}
+        <div class="p-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-sky-400 font-mono text-sm animate-pulse">
+          ⏳ Resolving &#123;async&#125; block promise in template...
+        </div>
+      {error}
+        <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
+          Failed to resolve async block.
+        </div>
+      {/async}
+    </div>
+  </TestSection>
+</div>

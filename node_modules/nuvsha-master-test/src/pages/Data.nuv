@@ -1,0 +1,106 @@
+<script>
+  import TestSection from "../components/TestSection.nuv";
+  import Button from "../components/Button.nuv";
+  import Badge from "../components/Badge.nuv";
+  import { fetchUsersApi, fetchMetricReport } from "../data/testData.js";
+
+  // Phase 11: Reactive Remote Data Primitive
+  usersStore = data(() => fetchUsersApi(300))
+  metricsStore = data(() => fetchMetricReport(false, 300))
+  failingStore = data(() => fetchMetricReport(true, 300))
+
+  reloadAll = () => {
+    usersStore.reload(300)
+    metricsStore.reload(false, 300)
+  }
+</script>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+      Phase 11 — API & Data Architecture
+    </h1>
+    <p class="text-sm text-slate-400 mt-1">
+      Validating the reactive data() primitive for asynchronous network data loading, automatic re-rendering, error catching, and manual reload.
+    </p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <Button onclick={() => reloadAll()}>
+      🔄 Reload All Data Stores
+    </Button>
+  </div>
+
+  <!-- Test 1: Successful Data Fetching -->
+  <TestSection 
+    phase="Phase 11" 
+    title="Reactive Remote Data (data() API)" 
+    description="Loads async users list with automated loading state and component $update notification."
+    status="PASS">
+    <div class="space-y-4">
+      {if usersStore.loading}
+        <div class="p-6 text-center text-sm text-sky-400 animate-pulse font-mono">
+          ⏳ Loading remote users from data() API...
+        </div>
+      {else if usersStore.error}
+        <div class="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
+          Error: {usersStore.error.message || String(usersStore.error)}
+        </div>
+      {else}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="text-xs uppercase bg-slate-950/60 text-slate-400 border-b border-slate-800 font-mono">
+              <tr>
+                <th class="px-4 py-2.5">User</th>
+                <th class="px-4 py-2.5">Role</th>
+                <th class="px-4 py-2.5">Email</th>
+                <th class="px-4 py-2.5 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              {for u of usersStore.data}
+                <tr class="hover:bg-slate-800/40">
+                  <td class="px-4 py-2.5 font-bold text-white">{u.name}</td>
+                  <td class="px-4 py-2.5 text-slate-400">{u.role}</td>
+                  <td class="px-4 py-2.5 font-mono text-xs text-sky-400">{u.email}</td>
+                  <td class="px-4 py-2.5 text-right">
+                    <Badge text={u.status} variant="success" />
+                  </td>
+                </tr>
+              {/for}
+            </tbody>
+          </table>
+        </div>
+      {/if}
+    </div>
+  </TestSection>
+
+  <!-- Test 2: Error Handling with data() primitive -->
+  <TestSection 
+    phase="Phase 11" 
+    title="Data Error Boundary & Catching" 
+    description="Validates that rejected promises populate store.error without unhandled rejections."
+    status="PASS">
+    <div class="space-y-4">
+      {if failingStore.loading}
+        <div class="p-4 text-center text-sm text-slate-400 animate-pulse font-mono">
+          Simulating failed request...
+        </div>
+      {else if failingStore.error}
+        <div class="p-4 rounded-lg bg-rose-950/40 border border-rose-500/30 text-rose-200 text-sm space-y-2">
+          <div class="flex items-center gap-2 font-bold text-rose-400">
+            <span>⚠</span> Caught Expected Simulated Error:
+          </div>
+          <p class="font-mono text-xs text-rose-300">
+            {failingStore.error.message || String(failingStore.error)}
+          </p>
+          <Button variant="danger" onclick={() => failingStore.reload(true, 300)}>
+            Retry Failing Request
+          </Button>
+        </div>
+      {else}
+        <p class="text-sm text-slate-300">Unexpected success</p>
+      {/if}
+    </div>
+  </TestSection>
+</div>

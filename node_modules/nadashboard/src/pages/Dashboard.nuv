@@ -1,0 +1,66 @@
+<script>
+  import { dashboardData } from "../data/dashboard.js"
+  import StatCard from "../components/StatCard.nuv"
+  import ActivityItem from "../components/ActivityItem.nuv"
+  
+  // Simulate an async load to demonstrate {async} loading state
+  loadDashboard = async () => {
+    await new Promise(r => setTimeout(r, 800))
+    return dashboardData
+  }
+</script>
+
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-bold text-white tracking-tight">Good evening, Admin</h1>
+    <p class="text-slate-400 mt-1">Here is your NAdashboard overview.</p>
+  </header>
+  
+  {async data = loadDashboard()}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StatCard title="Total Users" value={data.stats.totalUsers} trend={data.stats.trends.totalUsers} />
+      <StatCard title="Revenue" value={data.stats.revenue} trend={data.stats.trends.revenue} />
+      <StatCard title="Projects" value={data.stats.projects} trend={data.stats.trends.projects} />
+      <StatCard title="Tasks Completed" value={data.stats.tasksCompleted} trend={data.stats.trends.tasksCompleted} />
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+      <div class="lg:col-span-2 bg-slate-900/50 border border-slate-800/60 rounded-xl p-6 h-80 flex flex-col">
+        <h3 class="text-lg font-medium text-white mb-4">Revenue Analytics</h3>
+        <div class="flex-1 flex items-end justify-between gap-2 opacity-80 pt-8 border-b border-l border-slate-800 pb-2 pl-2">
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 40%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 60%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 35%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 80%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 90%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 70%;"></div>
+          <div class="w-full bg-sky-500/80 rounded-t" style="height: 100%;"></div>
+        </div>
+        <div class="flex justify-between text-xs text-slate-500 mt-2">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+      
+      <div class="bg-slate-900/50 border border-slate-800/60 rounded-xl flex flex-col">
+        <div class="p-6 border-b border-slate-800/60">
+          <h3 class="text-lg font-medium text-white">Recent Activity</h3>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+          {for activity of data.recentActivity}
+            <ActivityItem message={activity.message} time={activity.time} />
+          {/for}
+        </div>
+      </div>
+    </div>
+    
+  {loading}
+    <div class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
+    </div>
+    
+  {error}
+    <div class="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl">
+      Failed to load dashboard data. Please try again.
+    </div>
+  {/async}
+</div>\n

@@ -1,0 +1,17 @@
+<script>
+  title = "Metric"
+  value = "0"
+  trend = "0%"
+  
+  isPositive = () => trend.startsWith('+')
+</script>
+
+<div class="bg-slate-900/50 border border-slate-800/60 p-6 rounded-xl shadow-sm hover:border-slate-700 transition-colors">
+  <div class="flex justify-between items-start">
+    <p class="text-slate-400 text-sm font-medium">{title}</p>
+    <div class={"px-2 py-1 rounded text-xs font-medium " + (isPositive() ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400")}>
+      {trend}
+    </div>
+  </div>
+  <p class="text-3xl font-bold text-white mt-4">{value}</p>
+</div>\n
