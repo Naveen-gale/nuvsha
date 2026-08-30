@@ -9,4 +9,4 @@
   </div>
   <h3 class="text-lg font-medium text-slate-300">{message}</h3>
   <div class="mt-4">{children}</div>
-</div>\n
+</div>

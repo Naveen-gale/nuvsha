@@ -63,4 +63,4 @@
       Failed to load dashboard data. Please try again.
     </div>
   {/async}
-</div>\n
+</div>
