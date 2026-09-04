@@ -1,0 +1,16 @@
+<script>
+  let formData = {
+    username: "",
+    email: ""
+  };
+  
+  function handleSubmit() {
+    console.log("Submitting", formData);
+  }
+</script>
+
+<form @submit.prevent="handleSubmit">
+  <input type="text" bind:value="formData.username" placeholder="Username" />
+  <input type="email" bind:value="formData.email" placeholder="Email" />
+  <button type="submit">Submit</button>
+</form>

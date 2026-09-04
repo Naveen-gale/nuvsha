@@ -1,0 +1,14 @@
+<script>
+  let message = "Hello World";
+  let count = 0;
+  
+  function increment() {
+    count++;
+  }
+</script>
+
+<div class="basic-fixture">
+  <h1>{message}</h1>
+  <p>Count is: {count}</p>
+  <button @click="increment">Add 1</button>
+</div>

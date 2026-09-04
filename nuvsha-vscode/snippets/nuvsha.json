@@ -1,0 +1,72 @@
+{
+  "Basic Component": {
+    "prefix": "nuv",
+    "body": [
+      "<script>",
+      "  $1",
+      "</script>",
+      "",
+      "<div>",
+      "  $2",
+      "</div>"
+    ],
+    "description": "Create a basic Nuvsha component"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": [
+      "<script>",
+      "  $1",
+      "</script>"
+    ],
+    "description": "Create a Nuvsha script block"
+  },
+  "If Statement": {
+    "prefix": "if",
+    "body": [
+      "{if $1}",
+      "  $2",
+      "{/if}"
+    ],
+    "description": "Nuvsha if statement"
+  },
+  "For Loop": {
+    "prefix": "for",
+    "body": [
+      "{for $1 of $2}",
+      "  $3",
+      "{/for}"
+    ],
+    "description": "Nuvsha for loop"
+  },
+  "Async Block": {
+    "prefix": "async",
+    "body": [
+      "{async $1}",
+      "  {loading}",
+      "    $2",
+      "  {then data}",
+      "    $3",
+      "  {catch error}",
+      "    $4",
+      "{/async}"
+    ],
+    "description": "Nuvsha async block"
+  },
+  "Button with Event": {
+    "prefix": "btn",
+    "body": [
+      "<button @click=\"${1:handleClick}\">",
+      "  $2",
+      "</button>"
+    ],
+    "description": "Button with click event"
+  },
+  "Input with Binding": {
+    "prefix": "input",
+    "body": [
+      "<input type=\"${1:text}\" bind:value=\"${2:value}\" />"
+    ],
+    "description": "Input field with two-way binding"
+  }
+}

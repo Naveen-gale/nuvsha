@@ -1,0 +1,56 @@
+{
+  "name": "nuvsha",
+  "displayName": "Nuvsha",
+  "description": "Nuvsha language support for VS Code",
+  "version": "0.1.0",
+  "publisher": "nuvsha-team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nuvsha/nuvsha.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onLanguage:nuvsha"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "nuvsha",
+        "aliases": [
+          "Nuvsha",
+          "nuvsha"
+        ],
+        "extensions": [
+          ".nuv"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nuvsha",
+        "scopeName": "source.nuvsha",
+        "path": "./syntaxes/nuvsha.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "nuvsha",
+        "path": "./snippets/nuvsha.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha ./test/**/*.test.js"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}

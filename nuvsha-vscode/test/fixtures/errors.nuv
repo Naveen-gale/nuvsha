@@ -1,0 +1,8 @@
+<script>
+  let x = ; // Syntax error here intentionally for diagnostics testing
+</script>
+
+<div>
+  <!-- Unclosed tag intentionally -->
+  <span>This is broken
+</div>

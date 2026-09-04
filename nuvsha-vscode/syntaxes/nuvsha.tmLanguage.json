@@ -1,0 +1,104 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Nuvsha",
+  "scopeName": "source.nuvsha",
+  "patterns": [
+    {
+      "include": "#script"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#expressions"
+    },
+    {
+      "include": "#tags"
+    }
+  ],
+  "repository": {
+    "script": {
+      "begin": "(<)(script)(>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.html" },
+        "2": { "name": "entity.name.tag.script.html" },
+        "3": { "name": "punctuation.definition.tag.end.html" }
+      },
+      "end": "(</)(script)(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.html" },
+        "2": { "name": "entity.name.tag.script.html" },
+        "3": { "name": "punctuation.definition.tag.end.html" }
+      },
+      "contentName": "source.js"
+    },
+    "comments": {
+      "patterns": [
+        {
+          "begin": "<!--",
+          "end": "-->",
+          "name": "comment.block.html"
+        }
+      ]
+    },
+    "expressions": {
+      "begin": "\\{",
+      "end": "\\}",
+      "name": "meta.expression.nuvsha",
+      "patterns": [
+        {
+          "match": "\\b(if|else|for|async|loading|error)\\b",
+          "name": "keyword.control.nuvsha"
+        }
+      ]
+    },
+    "tags": {
+      "begin": "(</?)([a-zA-Z0-9:-]+)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.html" },
+        "2": { "name": "entity.name.tag.html" }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.html" }
+      },
+      "patterns": [
+        {
+          "match": "(@[a-zA-Z0-9:-]+)",
+          "name": "entity.other.attribute-name.event.nuvsha"
+        },
+        {
+          "match": "(bind:[a-zA-Z0-9:-]+)",
+          "name": "entity.other.attribute-name.bind.nuvsha"
+        },
+        {
+          "match": "\\b([a-zA-Z0-9:-]+)\\b(?=\\s*=\\s*)",
+          "name": "entity.other.attribute-name.html"
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.html",
+          "patterns": [
+            {
+              "include": "#expressions"
+            }
+          ]
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.html",
+          "patterns": [
+            {
+              "include": "#expressions"
+            }
+          ]
+        },
+        {
+          "include": "#expressions"
+        }
+      ]
+    }
+  }
+}

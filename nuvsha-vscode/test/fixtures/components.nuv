@@ -1,0 +1,13 @@
+<script>
+  import Card from "./Card.nuv";
+  import Button from "./Button.nuv";
+
+  let title = "Component Test";
+</script>
+
+<main>
+  <Card title={title}>
+    <p>This is inside the card.</p>
+    <Button variant="primary" @click="console.log('clicked')">Click Me</Button>
+  </Card>
+</main>

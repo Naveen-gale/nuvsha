@@ -1,0 +1,13 @@
+<script>
+  import { Router } from "nuvsha";
+  import { routes } from "./routes.js";
+</script>
+
+<div class="app">
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+  </nav>
+  
+  <Router routes={routes} />
+</div>
