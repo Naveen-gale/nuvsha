@@ -1,0 +1,121 @@
+﻿<script>
+  // Phase 17.3: Nuvsha Syntax Highlighting Showcase
+  import Card from "./components/Card.nuv"
+  import Button from "./components/Button.nuv"
+
+  // Reactive state variables
+  name = "Nuvsha Developer"
+  count = 0
+  show = true
+  accepted = false
+  requestStatus = "request"
+  response = ""
+
+  items = ["HTML", "CSS", "JavaScript"]
+
+  user = {
+    name: "Alex",
+    age: 20
+  }
+
+  // Event handlers
+  addItem = () => {
+    items.push("TypeScript")
+  }
+  
+  toggle = () => {
+    show = !show
+  }
+
+  requestData = async () => {
+    requestStatus = "loading"
+    response = await new Promise(resolve => setTimeout(() => resolve("Loaded!"), 1000))
+    requestStatus = "success"
+    console.log("Hello, World!");
+  }
+</script>
+
+<!-- Main Container -->
+<div class="app-container" id="main">
+
+  <header class="app-header">
+    <h1>Nuvsha Syntax Highlighting</h1>
+    <p>Welcome, {name}! Uppercase: {name.toUpperCase()}</p>
+    <p>User: {user.name} (Age: {user.age})</p>
+  </header>
+
+  <!-- Component with props & children -->
+  <Card title="Interactive Counter" count={count}>
+    <p>Clicks: {count} | Next: {count + 1}</p>
+    <div class="button-group">
+      <button onclick="count++" class="btn btn-primary">Add</button>
+      <button onclick="count--" class="btn btn-secondary">Subtract</button>
+      <button onclick="count = 0" class="btn">Reset</button>
+    </div>
+  </Card>
+
+  <!-- Two-way Form Binding -->
+  <section class="form-section">
+    <h2>Form Binding</h2>
+    <label>
+      <input type="checkbox" bind={accepted} />
+      I accept the terms
+    </label>
+    <p>Accepted status: {accepted}</p>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" bind={name} placeholder="Enter your name" />
+  </section>
+
+  <!-- Reactive Loops -->
+  <section class="loop-section">
+    <h2>Items ({items.length})</h2>
+    <ul>
+      {for item of items}
+        <li>{item}</li>
+      {/for}
+    </ul>
+    <Button onclick={addItem}>Add Item</Button>
+  </section>
+
+  <!-- Conditionals -->
+  <section class="conditional-section">
+    <h2>Conditional Rendering</h2>
+    <button onclick="toggle()">Toggle Message</button>
+    {if show}
+      <p class="success-text">The message is visible!</p>
+    {else if count > 5}
+      <p class="warn-text">Count is high ({count})!</p>
+    {else}
+      <p class="muted-text">The message is hidden.</p>
+    {/if}
+  </section>
+
+  <!-- Async Blocks -->
+  <section class="async-section">
+    <h2>Async Request</h2>
+    {if requestStatus === "request"}
+      <p>Status: Ready to send.</p>
+      <button onclick="requestData()">Fetch Data</button>
+    {else if requestStatus === "loading"}
+      <p>Loading data from server...</p>
+    {else}
+      <p>Success result: {response}</p>
+      <button onclick="requestData()">Fetch Again</button>
+    {/if}
+
+    <!-- Nuvsha async block syntax -->
+    {async data = fetch("/api/data")}
+      <p>Received: {data}</p>
+    {loading}
+      <p>Loading async data...</p>
+    {error}
+      <p>An error occurred loading data.</p>
+    {/async}
+  </section>
+
+  <footer class="app-footer">
+    <p>&copy; 2026 Nuvsha Project. All rights reserved.</p>
+  </footer>
+
+</div>

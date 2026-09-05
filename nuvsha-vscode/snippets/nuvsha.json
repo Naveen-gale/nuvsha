@@ -1,72 +1,383 @@
 {
-  "Basic Component": {
-    "prefix": "nuv",
+  "Nuvsha Component Starter": {
+    "prefix": [
+      "nvcomp",
+      "nuv"
+    ],
     "body": [
       "<script>",
-      "  $1",
+      "  ${1:// Component state}",
+      "  ${2:count = 0}",
       "</script>",
       "",
-      "<div>",
-      "  $2",
+      "<div class=\"${3:container}\">",
+      "  ${0}",
       "</div>"
     ],
-    "description": "Create a basic Nuvsha component"
+    "description": "Create a complete Nuvsha component with script and template"
   },
-  "Script Block": {
-    "prefix": "script",
+  "Nuvsha Script Block": {
+    "prefix": [
+      "nvscript",
+      "script"
+    ],
     "body": [
       "<script>",
-      "  $1",
+      "  ${0}",
       "</script>"
     ],
-    "description": "Create a Nuvsha script block"
+    "description": "Create a Nuvsha script block for component state and logic"
   },
-  "If Statement": {
-    "prefix": "if",
+  "Nuvsha Component Import": {
+    "prefix": [
+      "nvimport",
+      "import"
+    ],
     "body": [
-      "{if $1}",
-      "  $2",
+      "import ${1:Card} from \"./${2:components}/${1:Card}.nuv\""
+    ],
+    "description": "Import a .nuv component"
+  },
+  "Nuvsha If Block": {
+    "prefix": "nvif",
+    "body": [
+      "{if ${1:condition}}",
+      "  ${0}",
       "{/if}"
     ],
-    "description": "Nuvsha if statement"
+    "description": "Create a Nuvsha if conditional block"
   },
-  "For Loop": {
-    "prefix": "for",
+  "Nuvsha If-Else Block": {
+    "prefix": "nvifelse",
     "body": [
-      "{for $1 of $2}",
-      "  $3",
+      "{if ${1:condition}}",
+      "  ${2}",
+      "{else}",
+      "  ${0}",
+      "{/if}"
+    ],
+    "description": "Create a Nuvsha if-else conditional block"
+  },
+  "Nuvsha Else-If Branch": {
+    "prefix": "nvelseif",
+    "body": [
+      "{else if ${1:condition}}",
+      "  ${0}"
+    ],
+    "description": "Create a Nuvsha else-if branch"
+  },
+  "Nuvsha Else Branch": {
+    "prefix": "nvelse",
+    "body": [
+      "{else}",
+      "  ${0}"
+    ],
+    "description": "Create a Nuvsha else branch"
+  },
+  "Nuvsha For Loop": {
+    "prefix": [
+      "nvfor",
+      "for"
+    ],
+    "body": [
+      "{for ${1:item} of ${2:items}}",
+      "  ${0}",
       "{/for}"
     ],
-    "description": "Nuvsha for loop"
+    "description": "Create a Nuvsha reactive for loop"
   },
-  "Async Block": {
-    "prefix": "async",
+  "Nuvsha Expression": {
+    "prefix": "nvexpr",
     "body": [
-      "{async $1}",
-      "  {loading}",
-      "    $2",
-      "  {then data}",
-      "    $3",
-      "  {catch error}",
-      "    $4",
-      "{/async}"
+      "{${1:variable}}"
     ],
-    "description": "Nuvsha async block"
+    "description": "Interpolate a reactive state variable or expression"
   },
-  "Button with Event": {
-    "prefix": "btn",
+  "Nuvsha Children Slot": {
+    "prefix": [
+      "nvchildren",
+      "nvslot"
+    ],
     "body": [
-      "<button @click=\"${1:handleClick}\">",
-      "  $2",
+      "{children}"
+    ],
+    "description": "Project child elements inside a component (Phase 16 slot)"
+  },
+  "Nuvsha Component (Self-Closing)": {
+    "prefix": "nvcomponent",
+    "body": [
+      "<${1:Component} ${2:prop}={${3:value}} />"
+    ],
+    "description": "Instantiate a self-closing Nuvsha component with props"
+  },
+  "Nuvsha Component with Children": {
+    "prefix": "nvcomponent-children",
+    "body": [
+      "<${1:Component} ${2:prop}={${3:value}}>",
+      "  ${0}",
+      "</${1:Component}>"
+    ],
+    "description": "Instantiate a Nuvsha component wrapping child content"
+  },
+  "Nuvsha Click Event (Inline)": {
+    "prefix": "nvclick",
+    "body": [
+      "onclick=\"${1:count++}\""
+    ],
+    "description": "Inline Nuvsha click handler"
+  },
+  "Nuvsha Click Event (Function)": {
+    "prefix": "nvclickfn",
+    "body": [
+      "onclick=\"${1:handleClick}()\""
+    ],
+    "description": "Function call on click event"
+  },
+  "Nuvsha Generic Event": {
+    "prefix": "nvevent",
+    "body": [
+      "on${1:change}=\"${2:handleChange}()\""
+    ],
+    "description": "Nuvsha event attribute handler"
+  },
+  "Nuvsha Button with Click Event": {
+    "prefix": [
+      "nvbutton",
+      "nvbtn"
+    ],
+    "body": [
+      "<button onclick=\"${1:count++}\">",
+      "  ${2:Click me}",
       "</button>"
     ],
-    "description": "Button with click event"
+    "description": "Button element with reactive click handler"
   },
-  "Input with Binding": {
-    "prefix": "input",
+  "Nuvsha Two-Way Binding": {
+    "prefix": "nvbind",
     "body": [
-      "<input type=\"${1:text}\" bind:value=\"${2:value}\" />"
+      "bind={${1:variable}}"
     ],
-    "description": "Input field with two-way binding"
+    "description": "Two-way data binding attribute"
+  },
+  "Nuvsha Input with Binding": {
+    "prefix": [
+      "nvinput",
+      "input"
+    ],
+    "body": [
+      "<input type=\"${1:text}\" bind={${2:name}} placeholder=\"${3:Enter value...}\" />"
+    ],
+    "description": "Input field with two-way data binding"
+  },
+  "Nuvsha Checkbox with Binding": {
+    "prefix": "nvcheckbox",
+    "body": [
+      "<label>",
+      "  <input type=\"checkbox\" bind={${1:accepted}} />",
+      "  ${2:I accept the terms}",
+      "</label>"
+    ],
+    "description": "Checkbox input with boolean two-way binding"
+  },
+  "Nuvsha Select with Binding": {
+    "prefix": "nvselect",
+    "body": [
+      "<select bind={${1:selected}}>",
+      "  <option value=\"\">${2:Choose an option}</option>",
+      "  <option value=\"${3:option1}\">${4:Option 1}</option>",
+      "</select>"
+    ],
+    "description": "Select dropdown with two-way binding"
+  },
+  "Nuvsha Textarea with Binding": {
+    "prefix": "nvtextarea",
+    "body": [
+      "<textarea bind={${1:message}} placeholder=\"${2:Write your message...}\"></textarea>"
+    ],
+    "description": "Textarea element with two-way binding"
+  },
+  "Nuvsha Form with Submit": {
+    "prefix": [
+      "nvform",
+      "form"
+    ],
+    "body": [
+      "<form onsubmit=\"${1:handleSubmit}()\">",
+      "  ${0}",
+      "  <button type=\"submit\">${2:Submit}</button>",
+      "</form>"
+    ],
+    "description": "Form element with auto-prevented submit handler"
+  },
+  "Nuvsha Async Template Block": {
+    "prefix": [
+      "nvasync",
+      "async"
+    ],
+    "body": [
+      "{async ${1:data} = ${2:fetchData()}}",
+      "  ${3:<p>{${1:data}}</p>}",
+      "{loading}",
+      "  ${4:<p>Loading...</p>}",
+      "{error}",
+      "  ${5:<p>Error loading data.</p>}",
+      "{/async}"
+    ],
+    "description": "Nuvsha async template block with loading and error states"
+  },
+  "Nuvsha Data Fetch Primitive": {
+    "prefix": "nvdata",
+    "body": [
+      "${1:resource} = data(() => fetch(\"${2:/api/endpoint}\").then(res => res.json()))"
+    ],
+    "description": "Nuvsha Phase 11 data() primitive for async reactive data"
+  },
+  "Nuvsha Form Primitive": {
+    "prefix": [
+      "nvform-primitive",
+      "nvformobj"
+    ],
+    "body": [
+      "${1:loginForm} = form({",
+      "  ${2:email}: \"${3:}\",",
+      "  ${4:password}: \"${5:}\"",
+      "})"
+    ],
+    "description": "Nuvsha Phase 18 form() reactive primitive with loading, error, and submit"
+  },
+  "Nuvsha Router Component": {
+    "prefix": [
+      "nvrouter",
+      "nvroute"
+    ],
+    "body": [
+      "<Router routes={${1:routes}} />"
+    ],
+    "description": "Nuvsha SPA Router component"
+  },
+  "Nuvsha Route Definitions": {
+    "prefix": "nvroutes",
+    "body": [
+      "routes = [",
+      "  { path: \"/\", component: ${1:Home} },",
+      "  { path: \"/${2:about}\", component: ${3:About} }",
+      "]"
+    ],
+    "description": "Nuvsha route table array for <Router />"
+  },
+  "Nuvsha Div Element": {
+    "prefix": "nvdiv",
+    "body": [
+      "<div class=\"${1:container}\">",
+      "  ${0}",
+      "</div>"
+    ],
+    "description": "HTML div container element"
+  },
+  "Nuvsha Section Element": {
+    "prefix": "nvsection",
+    "body": [
+      "<section class=\"${1:section-name}\">",
+      "  ${0}",
+      "</section>"
+    ],
+    "description": "HTML section element"
+  },
+  "Nuvsha Main Element": {
+    "prefix": "nvmain",
+    "body": [
+      "<main>",
+      "  ${0}",
+      "</main>"
+    ],
+    "description": "HTML main content element"
+  },
+  "Nuvsha Header Element": {
+    "prefix": "nvheader",
+    "body": [
+      "<header>",
+      "  ${0}",
+      "</header>"
+    ],
+    "description": "HTML header element"
+  },
+  "Nuvsha Footer Element": {
+    "prefix": "nvfooter",
+    "body": [
+      "<footer>",
+      "  ${0}",
+      "</footer>"
+    ],
+    "description": "HTML footer element"
+  },
+  "Nuvsha Nav Element": {
+    "prefix": "nvnav",
+    "body": [
+      "<nav>",
+      "  ${0}",
+      "</nav>"
+    ],
+    "description": "HTML navigation element"
+  },
+  "Nuvsha Article Element": {
+    "prefix": "nvarticle",
+    "body": [
+      "<article>",
+      "  ${0}",
+      "</article>"
+    ],
+    "description": "HTML article element"
+  },
+  "Nuvsha Heading 1": {
+    "prefix": "nvh1",
+    "body": [
+      "<h1>${1:Heading 1}</h1>"
+    ],
+    "description": "HTML h1 heading"
+  },
+  "Nuvsha Heading 2": {
+    "prefix": "nvh2",
+    "body": [
+      "<h2>${1:Heading 2}</h2>"
+    ],
+    "description": "HTML h2 heading"
+  },
+  "Nuvsha Heading 3": {
+    "prefix": "nvh3",
+    "body": [
+      "<h3>${1:Heading 3}</h3>"
+    ],
+    "description": "HTML h3 heading"
+  },
+  "Nuvsha Paragraph": {
+    "prefix": "nvp",
+    "body": [
+      "<p>${1:Paragraph text}</p>"
+    ],
+    "description": "HTML paragraph element"
+  },
+  "Nuvsha Anchor Link": {
+    "prefix": "nva",
+    "body": [
+      "<a href=\"${1:#}\">${2:Link text}</a>"
+    ],
+    "description": "HTML anchor link element"
+  },
+  "Nuvsha Image Element": {
+    "prefix": "nvimg",
+    "body": [
+      "<img src=\"${1:path/to/image.png}\" alt=\"${2:Description}\" />"
+    ],
+    "description": "HTML self-closing image element"
+  },
+  "Nuvsha Unordered List": {
+    "prefix": "nvul",
+    "body": [
+      "<ul>",
+      "  <li>${1:Item 1}</li>",
+      "  <li>${2:Item 2}</li>",
+      "</ul>"
+    ],
+    "description": "HTML unordered list element"
   }
 }

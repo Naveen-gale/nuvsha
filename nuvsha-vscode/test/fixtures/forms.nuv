@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   let formData = {
     username: "",
     email: ""
@@ -9,8 +9,8 @@
   }
 </script>
 
-<form @submit.prevent="handleSubmit">
-  <input type="text" bind:value="formData.username" placeholder="Username" />
-  <input type="email" bind:value="formData.email" placeholder="Email" />
+<form onsubmit="handleSubmit()">
+  <input type="text" bind={formData.username} placeholder="Username" />
+  <input type="email" bind={formData.email} placeholder="Email" />
   <button type="submit">Submit</button>
 </form>
